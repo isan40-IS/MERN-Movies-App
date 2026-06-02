@@ -2,7 +2,7 @@ const GenreForm = ({
   value,
   setValue,
   handleSubmit,
-  buttonText = "Submit",
+  buttonText = 'Submit',
   handleDelete,
 }) => {
   return (

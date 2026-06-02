@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import Loader from "../../component/Loader";
-import { useProfileMutation } from "../../redux/api/users";
-import { setCredentials } from "../../redux/features/auth/authSlice";
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import Loader from '../../component/Loader';
+import { useProfileMutation } from '../../redux/api/users';
+import { setCredentials } from '../../redux/features/auth/authSlice';
 
 const Profile = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -27,7 +27,7 @@ const Profile = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error('Passwords do not match');
     } else {
       try {
         const res = await updateProfile({
@@ -37,7 +37,7 @@ const Profile = () => {
           password,
         }).unwrap();
         dispatch(setCredentials({ ...res }));
-        toast.success("Profile updated successfully");
+        toast.success('Profile updated successfully');
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }

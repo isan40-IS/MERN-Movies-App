@@ -1,13 +1,13 @@
-import SecondaryCard from "./SecondaryCard";
-import VideoCard from "./VideoCard";
-import ReactTimeCard from "./RealTimeCard";
+import SecondaryCard from './SecondaryCard';
+import VideoCard from './VideoCard';
+import ReactTimeCard from './RealTimeCard';
 
 import {
   useGetTopMoviesQuery,
   useGetAllMoviesQuery,
-} from "../../../../redux/api/movies";
-import { useGetUsersQuery } from "../../../../redux/api/users";
-import RealTimeCard from "./RealTimeCard";
+} from '../../../../redux/api/movies';
+import { useGetUsersQuery } from '../../../../redux/api/users';
+import RealTimeCard from './RealTimeCard';
 
 const Main = () => {
   const { data: topMovies } = useGetTopMoviesQuery();

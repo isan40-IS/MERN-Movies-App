@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
   useGetSpecificMovieQuery,
   useAddMovieReviewMutation,
-} from "../../redux/api/movies";
-import MovieTabs from "./MovieTabs";
+} from '../../redux/api/movies';
+import MovieTabs from './MovieTabs';
 
 const MovieDetails = () => {
   const { id: movieId } = useParams();
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const { data: movie, refetch } = useGetSpecificMovieQuery(movieId);
   const { userInfo } = useSelector((state) => state.auth);
   const [createReview, { isLoading: loadingMovieReview }] =
@@ -29,7 +29,7 @@ const MovieDetails = () => {
 
       refetch();
 
-      toast.success("Review created successfully");
+      toast.success('Review created successfully');
     } catch (error) {
       toast.error(error.data || error.message);
     }

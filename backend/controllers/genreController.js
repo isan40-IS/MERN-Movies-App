@@ -1,18 +1,18 @@
-import Genre from "../models/Genre.js";
-import asyncHandler from "../middlewares/asyncHandler.js";
+import Genre from '../models/Genre.js';
+import asyncHandler from '../middlewares/asyncHandler.js';
 
 const createGenre = asyncHandler(async (req, res) => {
   try {
     const { name } = req.body;
 
     if (!name) {
-      return res.json({ error: "Name is required" });
+      return res.json({ error: 'Name is required' });
     }
 
     const existingGenre = await Genre.findOne({ name });
 
     if (existingGenre) {
-      return res.json({ error: "Already exists" });
+      return res.json({ error: 'Already exists' });
     }
 
     const genre = await new Genre({ name }).save();
@@ -31,7 +31,7 @@ const updateGenre = asyncHandler(async (req, res) => {
     const genre = await Genre.findOne({ _id: id });
 
     if (!genre) {
-      return res.status(404).json({ error: "Genre not found" });
+      return res.status(404).json({ error: 'Genre not found' });
     }
 
     genre.name = name;
@@ -40,7 +40,7 @@ const updateGenre = asyncHandler(async (req, res) => {
     res.json(updatedGenre);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -50,13 +50,13 @@ const removeGenre = asyncHandler(async (req, res) => {
     const removed = await Genre.findByIdAndDelete(id);
 
     if (!removed) {
-      return res.status(404).json({ error: "Genre not found" });
+      return res.status(404).json({ error: 'Genre not found' });
     }
 
     res.json(removed);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Interval server error" });
+    res.status(500).json({ error: 'Interval server error' });
   }
 });
 

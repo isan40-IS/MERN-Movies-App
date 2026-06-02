@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const MovieTabs = ({ userInfo, submitHandler, comment, setComment, movie }) => {
   return (

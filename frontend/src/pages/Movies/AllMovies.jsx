@@ -1,20 +1,20 @@
-import { useGetAllMoviesQuery } from "../../redux/api/movies";
-import { useFetchGenresQuery } from "../../redux/api/genre";
+import { useGetAllMoviesQuery } from '../../redux/api/movies';
+import { useFetchGenresQuery } from '../../redux/api/genre';
 import {
   useGetNewMoviesQuery,
   useGetTopMoviesQuery,
   useGetRandomMoviesQuery,
-} from "../../redux/api/movies";
-import MovieCard from "./MovieCard";
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import banner from "../../assets/banner.jpg";
+} from '../../redux/api/movies';
+import MovieCard from './MovieCard';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import banner from '../../assets/banner.jpg';
 import {
   setMoviesFilter,
   setFilteredMovies,
   setMovieYears,
   setUniqueYears,
-} from "../../redux/features/movies/moviesSlice";
+} from '../../redux/features/movies/moviesSlice';
 
 const AllMovies = () => {
   const dispatch = useDispatch();
@@ -57,13 +57,13 @@ const AllMovies = () => {
 
   const handleSortChange = (sortOption) => {
     switch (sortOption) {
-      case "new":
+      case 'new':
         dispatch(setFilteredMovies(newMovies));
         break;
-      case "top":
+      case 'top':
         dispatch(setFilteredMovies(topMovies));
         break;
-      case "random":
+      case 'random':
         dispatch(setFilteredMovies(randomMovies));
         break;
 

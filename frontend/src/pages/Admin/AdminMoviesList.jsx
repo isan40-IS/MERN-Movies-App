@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { useGetAllMoviesQuery } from "../../redux/api/movies";
+import { Link } from 'react-router-dom';
+import { useGetAllMoviesQuery } from '../../redux/api/movies';
 
 const AdminMoviesList = () => {
   const { data: movies } = useGetAllMoviesQuery();

@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   useGetSpecificMovieQuery,
   useUpdateMovieMutation,
   useUploadImageMutation,
   useDeleteMovieMutation,
-} from "../../redux/api/movies";
-import { toast } from "react-toastify";
+} from '../../redux/api/movies';
+import { toast } from 'react-toastify';
 
 const UpdateMovie = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [movieData, setMovieData] = useState({
-    name: "",
+    name: '',
     year: 0,
-    detail: "",
+    detail: '',
     cast: [],
     ratings: 0,
     image: null,
@@ -61,7 +61,7 @@ const UpdateMovie = () => {
         !movieData.detail ||
         !movieData.cast
       ) {
-        toast.error("Please fill in all required fields");
+        toast.error('Please fill in all required fields');
         return;
       }
 
@@ -69,15 +69,15 @@ const UpdateMovie = () => {
 
       if (selectedImage) {
         const formData = new FormData();
-        formData.append("image", selectedImage);
+        formData.append('image', selectedImage);
 
         const uploadImageResponse = await uploadImage(formData);
 
         if (uploadImageResponse.data) {
           uploadedImagePath = uploadImageResponse.data.image;
         } else {
-          console.error("Failed to upload image:", uploadImageErrorDetails);
-          toast.error("Failed to upload image");
+          console.error('Failed to upload image:', uploadImageErrorDetails);
+          toast.error('Failed to upload image');
           return;
         }
       }
@@ -90,19 +90,19 @@ const UpdateMovie = () => {
         },
       });
 
-      navigate("/movies");
+      navigate('/movies');
     } catch (error) {
-      console.error("Failed to update movie:", error);
+      console.error('Failed to update movie:', error);
     }
   };
 
   const handleDeleteMovie = async () => {
     try {
-      toast.success("Movie deleted successfully");
+      toast.success('Movie deleted successfully');
       await deleteMovie(id);
-      navigate("/movies");
+      navigate('/movies');
     } catch (error) {
-      console.error("Failed to delete movie:", error);
+      console.error('Failed to delete movie:', error);
       toast.error(`Failed to delete movie: ${error?.message}`);
     }
   };
@@ -153,9 +153,9 @@ const UpdateMovie = () => {
             <input
               type="text"
               name="cast"
-              value={movieData.cast.join(", ")}
+              value={movieData.cast.join(', ')}
               onChange={(e) =>
-                setMovieData({ ...movieData, cast: e.target.value.split(", ") })
+                setMovieData({ ...movieData, cast: e.target.value.split(', ') })
               }
               className="border px-2 py-1 w-full"
             />
@@ -167,23 +167,23 @@ const UpdateMovie = () => {
             style={
               !selectedImage
                 ? {
-                    border: "1px solid #888",
-                    borderRadius: "5px",
-                    padding: "8px",
+                    border: '1px solid #888',
+                    borderRadius: '5px',
+                    padding: '8px',
                   }
                 : {
-                    border: "0",
-                    borderRadius: "0",
-                    padding: "0",
+                    border: '0',
+                    borderRadius: '0',
+                    padding: '0',
                   }
             }
           >
-            {!selectedImage && "Upload Image"}
+            {!selectedImage && 'Upload Image'}
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              style={{ display: !selectedImage ? "none" : "block" }}
+              style={{ display: !selectedImage ? 'none' : 'block' }}
             />
           </label>
         </div>
@@ -194,7 +194,7 @@ const UpdateMovie = () => {
           className="bg-teal-500 text-white px-4 py-2 rounded"
           disabled={isUpdatingMovie || isUploadingImage}
         >
-          {isUpdatingMovie || isUploadingImage ? "Updating..." : "Update Movie"}
+          {isUpdatingMovie || isUploadingImage ? 'Updating...' : 'Update Movie'}
         </button>
 
         <button
@@ -203,7 +203,7 @@ const UpdateMovie = () => {
           className="bg-red-500 text-white px-4 py-2 rounded ml-2"
           disabled={isUpdatingMovie || isUploadingImage}
         >
-          {isUpdatingMovie || isUploadingImage ? "Deleting..." : "Delete Movie"}
+          {isUpdatingMovie || isUploadingImage ? 'Deleting...' : 'Delete Movie'}
         </button>
       </form>
     </div>

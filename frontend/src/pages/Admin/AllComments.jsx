@@ -1,8 +1,8 @@
 import {
   useDeleteCommentMutation,
   useGetAllMoviesQuery,
-} from "../../redux/api/movies";
-import { toast } from "react-toastify";
+} from '../../redux/api/movies';
+import { toast } from 'react-toastify';
 
 const AllComments = () => {
   const { data: movie, refetch } = useGetAllMoviesQuery();
@@ -12,10 +12,10 @@ const AllComments = () => {
   const handleDeleteComment = async (movieId, reviewId) => {
     try {
       await deleteComment({ movieId, reviewId });
-      toast.success("Comment Deleted");
+      toast.success('Comment Deleted');
       refetch();
     } catch (error) {
-      console.error("Error deleting comment: ", error);
+      console.error('Error deleting comment: ', error);
     }
   };
 

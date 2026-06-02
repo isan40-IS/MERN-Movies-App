@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   AiOutlineHome,
   AiOutlineLogin,
   AiOutlineUserAdd,
-} from "react-icons/ai";
-import { MdOutlineLocalMovies } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useLogoutMutation } from "../../redux/api/users";
-import { logout } from "../../redux/features/auth/authSlice";
+} from 'react-icons/ai';
+import { MdOutlineLocalMovies } from 'react-icons/md';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLogoutMutation } from '../../redux/api/users';
+import { logout } from '../../redux/features/auth/authSlice';
 
 const Navigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -28,7 +28,7 @@ const Navigation = () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      navigate("/login");
+      navigate('/login');
     } catch (error) {
       console.error(error);
     }
@@ -71,7 +71,7 @@ const Navigation = () => {
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className={`h-4 w-4 ml-1 ${
-                  dropdownOpen ? "transform rotate-180" : ""
+                  dropdownOpen ? 'transform rotate-180' : ''
                 }`}
                 fill="none"
                 viewBox="0 0 24 24"
@@ -81,7 +81,7 @@ const Navigation = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d={dropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                  d={dropdownOpen ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7'}
                 />
               </svg>
             )}
@@ -90,7 +90,7 @@ const Navigation = () => {
           {dropdownOpen && userInfo && (
             <ul
               className={`absolute right-0 mt-2 mr-14 w-[10rem] space-y-2 bg-white text-gray-600 ${
-                !userInfo.isAdmin ? "-top-20" : "-top-24"
+                !userInfo.isAdmin ? '-top-20' : '-top-24'
               }`}
             >
               {userInfo.isAdmin && (
