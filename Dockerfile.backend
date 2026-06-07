@@ -1,0 +1,18 @@
+# Dockerfile.backend
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Menyalin package.json dari root (backend)
+COPY package*.json ./
+
+# Install dependencies khusus production
+RUN npm install --production
+
+# Menyalin seluruh source code backend
+COPY backend/ ./backend/
+
+EXPOSE 3000
+
+# Menjalankan backend
+CMD ["node", "backend/index.js"]
