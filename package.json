@@ -5,17 +5,28 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "fullstack": "concurrently \"npm run backend\" \"npm run frontend\"",
     "backend": "nodemon backend/index.js",
-    "frontend": "cd frontend && npm run dev",
+    "frontend": "npm run dev --prefix frontend",
+    "fullstack": "concurrently \"npm run backend\" \"npm run frontend\"",
+
     "seed": "node backend/seeder.js",
-    "lint:backend": "npx eslint backend --ext .js",
-    "lint:frontend": "cd frontend && npm run lint",
+    "setup": "npm ci && npm ci --prefix frontend",
+    "setup:seed": "npm run setup && npm run seed",
+    "start:full": "npm run setup:seed && npm run fullstack",
+
+    "lint:backend": "eslint backend --ext .js",
+    "lint:frontend": "npm run lint --prefix frontend",
     "lint": "npm run lint:backend && npm run lint:frontend",
-    "test:backend": "npx jest --runInBand --config jest.config.cjs",
+
+    "test:backend": "cross-env NODE_ENV=test jest --runInBand --config jest.config.cjs",
     "test": "npm run test:backend",
-    "build:frontend": "cd frontend && npm run build",
-    "docker:build": "docker build -f Dockerfile.backend -t mern-movies-backend:latest . && docker build -f Dockerfile.frontend -t mern-movies-frontend:latest frontend",
+
+    "build:frontend": "npm run build --prefix frontend",
+
+    "docker:build:backend": "docker build -f Dockerfile.backend -t mern-movies-backend:latest .",
+    "docker:build:frontend": "docker build -f Dockerfile.frontend -t mern-movies-frontend:latest .",
+    "docker:build": "npm run docker:build:backend && npm run docker:build:frontend",
+
     "compose:up": "docker compose up --build",
     "compose:down": "docker compose down"
   },
