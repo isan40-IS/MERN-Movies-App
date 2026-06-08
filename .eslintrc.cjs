@@ -5,8 +5,8 @@ module.exports = {
   extends: ['eslint:recommended', 'prettier'],
   ignorePatterns: ['node_modules/', 'frontend/node_modules/', 'dist/', '.git/'],
   rules: {
-    'no-console': 'warn',
-    'prefer-const': 'warn',
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'prefer-const': 'error',
     'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-  },
+  }
 };
