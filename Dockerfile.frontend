@@ -1,27 +1,16 @@
-# Stage 1: Build React App
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
+WORKDIR /usr/src/app
 
-WORKDIR /app
-
-# 1. HANYA copy package.json dari folder frontend
 COPY frontend/package*.json ./
 RUN npm install
 
-# 2. HANYA copy seluruh isi folder frontend ke dalam /app
 COPY frontend/ ./
-
-# Proses build Vite akan dieksekusi (sekarang pasti berhasil karena membaca package.json React)
 RUN npm run build
 
-# Stage 2: Serve dengan Nginx
-FROM nginx:alpine
+FROM node:20-alpine AS runner
+WORKDIR /usr/src/app
+RUN npm install -g serve
 
-# Menyalin hasil build dari stage 1 ke direktori Nginx
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Menyalin konfigurasi Nginx kustom dari root folder
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=builder /usr/src/app/dist ./dist
+EXPOSE 4173
+CMD ["serve", "-s", "dist", "-l", "4173"]
