@@ -1,3 +1,4 @@
+/* eslint-env jest */
 import request from 'supertest';
 import app from '../app.js';
 import Movie from '../models/Movie.js';
