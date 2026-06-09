@@ -12,64 +12,141 @@ on:
           - staging
           - production
 
+env:
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  BACKEND_IMAGE_NAME: mernmoviesapp-backend
+  FRONTEND_IMAGE_NAME: mernmoviesapp-frontend
+
 jobs:
-  build:
-    name: Build artifacts for deployment
+  build-and-push:
+    name: Build and Push Images to ACR
     runs-on: ubuntu-latest
+
+    outputs:
+      image_tag: ${{ steps.vars.outputs.image_tag }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: vars
+        run: echo "image_tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install root dependencies
         run: npm ci
 
       - name: Install frontend dependencies
-        run: cd frontend && npm ci
+        run: npm ci --prefix frontend
 
-      - name: Build frontend
+      - name: Run lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run backend tests
+        run: npm test
+
+      - name: Build frontend assets
         run: npm run build:frontend
 
-      - name: Build backend container image
-        run: docker build -f Dockerfile.backend -t mern-movies-backend:staging .
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build frontend container image
-        run: docker build -f Dockerfile.frontend -t mern-movies-frontend:staging frontend
+      - name: Build backend image
+        run: |
+          docker build \
+            -f Dockerfile.backend \
+            -t $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }} \
+            -t $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest \
+            .
+
+      - name: Build frontend image
+        run: |
+          docker build \
+            -f Dockerfile.frontend \
+            --build-arg VITE_API_BASE_URL=${{ secrets.STAGING_BACKEND_URL }} \
+            -t $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }} \
+            -t $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest \
+            .
+
+      - name: Push backend image
+        run: |
+          docker push $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }}
+          docker push $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest
+
+      - name: Push frontend image
+        run: |
+          docker push $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }}
+          docker push $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest
 
   deploy-staging:
     name: Deploy to Staging
-    needs: build
+    needs: build-and-push
     if: github.event.inputs.environment == 'staging'
     runs-on: ubuntu-latest
     environment:
       name: staging
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Placeholder staging deployment
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_STAGING }}
+
+      - name: Deploy backend container to staging
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_BACKEND_WEBAPP_NAME_STAGING }}
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-backend:${{ needs.build-and-push.outputs.image_tag }}
+
+      - name: Deploy frontend container to staging
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_FRONTEND_WEBAPP_NAME_STAGING }}
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-frontend:${{ needs.build-and-push.outputs.image_tag }}
+
+      - name: Smoke test staging backend
         run: |
-          echo "Staging deployment skeleton."
-          echo "Add Azure login, ACR push/pull, and App Service deployment commands here."
-          echo "Required secrets: ACR_LOGIN_SERVER, ACR_USERNAME, ACR_PASSWORD, AZURE_WEBAPP_NAME_STAGING."
+          curl -f ${{ secrets.STAGING_BACKEND_URL }}/api/v1/health
 
   deploy-production:
     name: Deploy to Production
-    needs: build
+    needs: build-and-push
     if: github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
     environment:
       name: production
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Placeholder production deployment
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_PRODUCTION }}
+
+      - name: Deploy backend container to production
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_BACKEND_WEBAPP_NAME_PRODUCTION }}
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-backend:${{ needs.build-and-push.outputs.image_tag }}
+
+      - name: Deploy frontend container to production
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_FRONTEND_WEBAPP_NAME_PRODUCTION }}
+          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-frontend:${{ needs.build-and-push.outputs.image_tag }}
+
+      - name: Smoke test production backend
         run: |
-          echo "Production deployment skeleton."
-          echo "Add Azure login, ACR push/pull, and App Service deployment commands here."
-          echo "Required secrets: ACR_LOGIN_SERVER, ACR_USERNAME, ACR_PASSWORD, AZURE_WEBAPP_NAME_PRODUCTION."
+          curl -f ${{ secrets.PRODUCTION_BACKEND_URL }}/api/v1/health
