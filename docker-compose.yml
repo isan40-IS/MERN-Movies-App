@@ -29,7 +29,7 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
       args:
-        VITE_API_URL: "http://backend:3000/api/v1"
+        VITE_API_URL: 'http://backend:3000/api/v1'
     ports:
       - '4173:4173'
     environment:
@@ -42,16 +42,15 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9090:9090"
+      - '9090:9090'
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3005:3000"
+      - '3005:3000'
     depends_on:
       - prometheus
-
 
 volumes:
   mongo-data:

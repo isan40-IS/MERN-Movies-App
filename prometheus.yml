@@ -4,6 +4,6 @@ global:
 scrape_configs:
   - job_name: 'movies-backend'
     static_configs:
-      # Karena Prometheus jalan di Docker dan backend jalan di laptopmu, 
+      # Karena Prometheus jalan di Docker dan backend jalan di laptopmu,
       # kita gunakan 'host.docker.internal' untuk menembak ke localhost:3000
       - targets: ['host.docker.internal:3000']
