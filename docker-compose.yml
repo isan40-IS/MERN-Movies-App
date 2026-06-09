@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   mongo:
     image: mongo:6.0
@@ -18,8 +16,9 @@ services:
       - '3000:3000'
     environment:
       - PORT=3000
-      - MONGO_URI=mongodb://mongo:27017/mern-movies
+      - MONGO_URI=mongodb://root:example@mongo:27017/mern-movies?authSource=admin
       - JWT_SECRET=devsecret
+      - FRONTEND_ORIGIN=http://localhost:4173,http://localhost:5173
     depends_on:
       - mongo
     volumes:
@@ -27,12 +26,12 @@ services:
 
   frontend:
     build:
-      context: frontend
+      context: .
       dockerfile: Dockerfile.frontend
+      args:
+        VITE_API_URL: http://localhost:3000
     ports:
       - '4173:4173'
-    environment:
-      - VITE_API_URL=http://localhost:3000/api/v1
     depends_on:
       - backend
 

@@ -24,7 +24,7 @@ describe('Movie API - Search and Filter Functionality', () => {
       name: 'Test Action Movie',
       year: 2024,
       genre: genre._id,
-      detail: 'An action-packed movie'
+      detail: 'An action-packed movie',
     });
 
     const res = await request(app).get('/api/v1/movies/all-movies');
@@ -39,13 +39,13 @@ describe('Movie API - Search and Filter Functionality', () => {
       name: 'The Great Movie',
       year: 2023,
       genre: genre._id,
-      detail: 'A great drama movie'
+      detail: 'A great drama movie',
     });
     await Movie.create({
       name: 'Another Film',
       year: 2024,
       genre: genre._id,
-      detail: 'A different movie'
+      detail: 'A different movie',
     });
 
     const res = await request(app).get('/api/v1/movies/all-movies?search=great');
@@ -62,13 +62,13 @@ describe('Movie API - Search and Filter Functionality', () => {
       name: 'Action Hero',
       year: 2023,
       genre: actionGenre._id,
-      detail: 'An action movie'
+      detail: 'An action movie',
     });
     await Movie.create({
       name: 'Drama Series',
       year: 2024,
       genre: dramaGenre._id,
-      detail: 'A drama movie'
+      detail: 'A drama movie',
     });
 
     const res = await request(app).get(`/api/v1/movies/all-movies?genre=${actionGenre._id}`);
@@ -83,13 +83,13 @@ describe('Movie API - Search and Filter Functionality', () => {
       name: 'Future Movie 2024',
       year: 2024,
       genre: genre._id,
-      detail: 'A 2024 sci-fi movie'
+      detail: 'A 2024 sci-fi movie',
     });
     await Movie.create({
       name: 'Past Movie 2020',
       year: 2020,
       genre: genre._id,
-      detail: 'A 2020 sci-fi movie'
+      detail: 'A 2020 sci-fi movie',
     });
 
     const res = await request(app).get('/api/v1/movies/all-movies?year=2024');
@@ -106,13 +106,13 @@ describe('Movie API - Search and Filter Functionality', () => {
       name: 'Action 2024',
       year: 2024,
       genre: actionGenre._id,
-      detail: 'New action movie'
+      detail: 'New action movie',
     });
     await Movie.create({
       name: 'Drama 2024',
       year: 2024,
       genre: dramaGenre._id,
-      detail: 'New drama movie'
+      detail: 'New drama movie',
     });
 
     const res = await request(app).get(
@@ -129,7 +129,7 @@ describe('Movie API - Search and Filter Functionality', () => {
       name: 'Funny Movie',
       year: 2024,
       genre: genre._id,
-      detail: 'A comedy movie'
+      detail: 'A comedy movie',
     });
 
     const res = await request(app).get('/api/v1/movies/all-movies?search=nonexistent');

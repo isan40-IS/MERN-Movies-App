@@ -6,70 +6,100 @@ on:
       environment:
         description: 'Target deployment environment'
         required: true
-        default: staging
+        default: production
         type: choice
         options:
-          - staging
           - production
 
 jobs:
-  build:
-    name: Build artifacts for deployment
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install root dependencies
-        run: npm ci
-
-      - name: Install frontend dependencies
-        run: cd frontend && npm ci
-
-      - name: Build frontend
-        run: npm run build:frontend
-
-      - name: Build backend container image
-        run: docker build -f Dockerfile.backend -t mern-movies-backend:staging .
-
-      - name: Build frontend container image
-        run: docker build -f Dockerfile.frontend -t mern-movies-frontend:staging frontend
-
-  deploy-staging:
-    name: Deploy to Staging
-    needs: build
-    if: github.event.inputs.environment == 'staging'
-    runs-on: ubuntu-latest
-    environment:
-      name: staging
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Placeholder staging deployment
-        run: |
-          echo "Staging deployment skeleton."
-          echo "Add Azure login, ACR push/pull, and App Service deployment commands here."
-          echo "Required secrets: ACR_LOGIN_SERVER, ACR_USERNAME, ACR_PASSWORD, AZURE_WEBAPP_NAME_STAGING."
-
   deploy-production:
-    name: Deploy to Production
-    needs: build
+    name: Build, Push & Deploy Production
     if: github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
     environment:
       name: production
+
+    env:
+      BACKEND_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/mern-movies-backend:${{ github.sha }}
+      FRONTEND_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/mern-movies-frontend:${{ github.sha }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Placeholder production deployment
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        run: az acr login --name "${{ secrets.ACR_NAME }}"
+
+      - name: Build backend image
+        run: docker build -f Dockerfile.backend -t "$BACKEND_IMAGE" .
+
+      - name: Build frontend image
         run: |
-          echo "Production deployment skeleton."
-          echo "Add Azure login, ACR push/pull, and App Service deployment commands here."
-          echo "Required secrets: ACR_LOGIN_SERVER, ACR_USERNAME, ACR_PASSWORD, AZURE_WEBAPP_NAME_PRODUCTION."
+          docker build \
+            -f Dockerfile.frontend \
+            --build-arg VITE_API_URL="${{ secrets.VITE_API_URL }}" \
+            -t "$FRONTEND_IMAGE" .
+
+      - name: Push backend image
+        run: docker push "$BACKEND_IMAGE"
+
+      - name: Push frontend image
+        run: docker push "$FRONTEND_IMAGE"
+
+      - name: Configure backend app settings
+        run: |
+          az webapp config appsettings set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.BACKEND_WEBAPP_NAME }}" \
+            --settings \
+              NODE_ENV=production \
+              PORT=3000 \
+              WEBSITES_PORT=3000 \
+              MONGO_URI="${{ secrets.MONGO_URI_PRODUCTION }}" \
+              JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              FRONTEND_ORIGIN="${{ secrets.FRONTEND_ORIGIN }}"
+
+      - name: Configure frontend app settings
+        run: |
+          az webapp config appsettings set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}" \
+            --settings \
+              WEBSITES_PORT=4173
+
+      - name: Enable managed identity ACR pull
+        run: |
+          az webapp config set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.BACKEND_WEBAPP_NAME }}" \
+            --generic-configurations '{"acrUseManagedIdentityCreds": true}'
+          az webapp config set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}" \
+            --generic-configurations '{"acrUseManagedIdentityCreds": true}'
+
+      - name: Deploy backend image
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.BACKEND_WEBAPP_NAME }}
+          images: ${{ env.BACKEND_IMAGE }}
+
+      - name: Deploy frontend image
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.FRONTEND_WEBAPP_NAME }}
+          images: ${{ env.FRONTEND_IMAGE }}
+
+      - name: Restart web apps
+        run: |
+          az webapp restart \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.BACKEND_WEBAPP_NAME }}"
+          az webapp restart \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}"

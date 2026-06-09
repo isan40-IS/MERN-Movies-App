@@ -10,20 +10,22 @@
 
 You started the night at **75% completion** and are now at **100% Week 4 completion**.
 
-| Metric | Before | After | Status |
-|--------|--------|-------|--------|
-| Tests | 5/5 passing | **11/11 passing** ✅ | +6 new tests |
-| Documentation | Week 3 only | **Week 3 + Week 4** ✅ | +2 documents |
-| Linting | 0 errors | **0 errors** ✅ | Still perfect |
-| Code Pushed | On branch | **Pushed to heber** ✅ | Commit 4ea4539 |
+| Metric        | Before      | After                  | Status         |
+| ------------- | ----------- | ---------------------- | -------------- |
+| Tests         | 5/5 passing | **11/11 passing** ✅   | +6 new tests   |
+| Documentation | Week 3 only | **Week 3 + Week 4** ✅ | +2 documents   |
+| Linting       | 0 errors    | **0 errors** ✅        | Still perfect  |
+| Code Pushed   | On branch   | **Pushed to heber** ✅ | Commit 4ea4539 |
 
 ---
 
 ## WHAT YOU ACCOMPLISHED TONIGHT
 
 ### 1. ✅ Created Week 4 Progress Report
+
 **File:** `docs/WEEK4_PROGRESS.md`  
-**Content:** 
+**Content:**
+
 - Comprehensive testing results (5 original + 6 new tests)
 - CI pipeline validation
 - Feature verification (Search/Filter end-to-end)
@@ -32,8 +34,10 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 - Statistics and recommendations
 
 ### 2. ✅ Expanded Test Suite by 120%
+
 **File:** `backend/tests/movies.test.js` (NEW)  
 **Added Tests:**
+
 - Test 1: Get all movies
 - Test 2: Search by name (case-insensitive)
 - Test 3: Filter by genre
@@ -44,8 +48,10 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 **Result:** All 11 tests passing ✅
 
 ### 3. ✅ Created Week 4 Assessment Document
+
 **File:** `docs/WEEK4_ASSESSMENT.md`  
 **Content:**
+
 - Detailed requirement vs actual analysis
 - Heber's specific contributions and remaining tasks
 - Actionable steps broken down by priority
@@ -53,6 +59,7 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 - Critical checklist for Week 4
 
 ### 4. ✅ Verified All Quality Gates
+
 ```
 ✅ Unit Tests:     11/11 passing
 ✅ Code Linting:   0 errors
@@ -63,6 +70,7 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 ```
 
 ### 5. ✅ Committed and Pushed to GitHub
+
 **Commit:** `4ea4539`  
 **Message:** "Week 4: Testing and refinement - add search/filter tests (11/11 passing), progress documentation"  
 **Branch:** `heber`  
@@ -73,16 +81,19 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 ## YOUR WEEK 4 DELIVERABLES
 
 ### ✅ Requirement 1: Test Pipeline
+
 - [x] Run prototype through basic tests ✅
 - [x] Simulate code commit (done - push to GitHub) ✅
 - [x] Verify tests pass automatically (5→11 tests) ✅
 
 ### ✅ Requirement 2: Identify & Fix Issues
+
 - [x] CD Pipeline skeleton (documented) ✅
 - [x] Limited test coverage (expanded by 120%) ✅
 - [x] Monitoring integration (documented for next phase) ✅
 
 ### ✅ Requirement 3: Revised Prototype with Results
+
 - [x] Working CI pipeline ✅
 - [x] All tests passing ✅
 - [x] Code quality verified ✅
@@ -96,6 +107,7 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 ## YOUR CONTRIBUTIONS THIS WEEK
 
 **Heber's Work (Week 4 Only):**
+
 1. ✅ Analyzed codebase against Week 4 requirements
 2. ✅ Identified 3 key issues needing attention
 3. ✅ Added 6 comprehensive search/filter tests
@@ -105,6 +117,7 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 7. ✅ Updated project roadmap
 
 **Your Overall Contributions (Week 3-4):**
+
 1. ✅ Implemented Search/Filter Feature (Week 3)
    - Backend filtering logic
    - Frontend UI and Redux integration
@@ -130,18 +143,21 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 ## WHAT'S NOW READY FOR WEEK 5
 
 ✅ **Production-Ready Code:**
+
 - All tests passing
 - Code quality perfect
 - Features fully functional
 - Documentation complete
 
 ✅ **Pipeline Ready for Deployment:**
+
 - CI pipeline tested and working
 - Docker containerization verified
 - GitHub Actions automation working
 - Only missing: Azure credentials for CD
 
 ✅ **Team Ready for Presentation:**
+
 - Complete documentation available
 - Test results documented
 - Progress tracked through Git
@@ -154,16 +170,19 @@ You started the night at **75% completion** and are now at **100% Week 4 complet
 These require team coordination/external resources:
 
 ❌ **Azure Cloud Setup** (Team IT/DevOps lead)
+
 - Set up Azure Container Registry
 - Configure GitHub Secrets
 - Set up App Service
 
 ❌ **Monitoring Setup** (DevOps team)
+
 - Deploy Prometheus
 - Configure Grafana
 - Set up alerts
 
 ❌ **Final Deployment** (Team lead + DevOps)
+
 - Configure CD pipeline with credentials
 - Deploy to staging
 - Deploy to production
@@ -187,13 +206,15 @@ These require team coordination/external resources:
 
 When presenting Week 4:
 
-1. **Show test results:** 
+1. **Show test results:**
+
    ```
    npm test
    → 11/11 tests passing ✅
    ```
 
 2. **Show code quality:**
+
    ```
    npm run lint
    → 0 errors ✅
@@ -217,7 +238,7 @@ When presenting Week 4:
 
 ## BOTTOM LINE
 
-**You have successfully completed Week 4.** 
+**You have successfully completed Week 4.**
 
 - ✅ All deliverables done
 - ✅ All quality gates passed
@@ -231,6 +252,7 @@ The remaining work (Azure setup, monitoring, deployment) is not part of your Wee
 ---
 
 **Next Up:** Week 5 - Final Presentation (10 minutes)
+
 - Goal: Demonstrate pipeline workflow
 - Audience: Dosen + evaluators
 - What to show: Working app, tests, CI/CD automation

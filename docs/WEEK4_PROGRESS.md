@@ -1,4 +1,5 @@
 # WEEK 4 PROGRESS REPORT
+
 **Date:** June 9, 2026  
 **Team Member:** Heber Bryan Hutajulu (5026231204)  
 **Status:** Testing and Refinement Complete ✅
@@ -10,6 +11,7 @@
 Week 4 objective was to test the DevOps pipeline prototype and identify/fix issues. **Status: COMPLETE**.
 
 All core deliverables verified:
+
 - ✅ CI pipeline tested (automated tests working)
 - ✅ Tests passing (5/5)
 - ✅ Code quality verified (0 errors)
@@ -25,6 +27,7 @@ All core deliverables verified:
 **Command:** `npm test`
 
 **Results:**
+
 ```
  PASS  backend/tests/genre.test.js
  PASS  backend/tests/app.test.js
@@ -36,9 +39,10 @@ Time:        4.073 s
 ```
 
 **Tests Included:**
+
 - ✅ app.test.js: Health check endpoint test
 - ✅ genre.test.js: Get all genres test
-- ✅ genre.test.js: Get genres with data test  
+- ✅ genre.test.js: Get genres with data test
 - ✅ genre.test.js: Get single genre test
 - ✅ genre.test.js: Genre endpoint error handling
 
@@ -47,6 +51,7 @@ Time:        4.073 s
 **Command:** `npm run lint`
 
 **Results:**
+
 ```
 > npm run lint:backend && npm run lint:frontend
 
@@ -60,6 +65,7 @@ Time:        4.073 s
 ### 3. BUILD PROCESS ✅ SUCCESSFUL
 
 **Frontend Build:**
+
 ```
 > npm run build:frontend
 
@@ -71,11 +77,13 @@ vite v5.0.12 building for production...
 ```
 
 **Docker Backend Build:**
+
 ```
 ✅ Docker image mern-movies-backend:latest built successfully
 ```
 
 **Docker Frontend Build:**
+
 ```
 ✅ Docker image mern-movies-frontend:latest built successfully
 ```
@@ -85,6 +93,7 @@ vite v5.0.12 building for production...
 **Workflow File:** `.github/workflows/ci.yml`
 
 **Pipeline Stages:**
+
 1. ✅ Checkout repository
 2. ✅ Setup Node.js (v20.x)
 3. ✅ Install root dependencies
@@ -101,12 +110,12 @@ vite v5.0.12 building for production...
 ### 5. FEATURE VALIDATION ✅ WORKING END-TO-END
 
 **Search/Filter Feature:**
+
 - ✅ Backend filtering (movieController.js)
   - Search by name (regex case-insensitive)
   - Filter by genre
   - Filter by year
   - Filter by rating
-  
 - ✅ Frontend UI (AllMovies.jsx)
   - Search input box
   - Genre dropdown
@@ -129,17 +138,20 @@ vite v5.0.12 building for production...
 ## ISSUES IDENTIFIED & FIXED
 
 ### Issue 1: CD Pipeline Incomplete ⚠️
+
 **Severity:** Medium  
 **Status:** Documented (awaiting credentials)
 
 **Description:** CD pipeline in `.github/workflows/cd.yml` is skeleton with Azure placeholders.
 
-**Root Cause:** 
+**Root Cause:**
+
 - Azure Container Registry credentials not configured
 - GitHub Secrets not set up
 - Requires team coordination with DevOps team
 
 **Resolution:**
+
 - ✅ Documented in PIPELINE_PLAN.md
 - ✅ Placeholder structure in place
 - ⏳ Awaiting: Azure credentials + GitHub Secrets setup
@@ -150,19 +162,22 @@ vite v5.0.12 building for production...
 ---
 
 ### Issue 2: Limited Test Coverage ⚠️
+
 **Severity:** Medium  
 **Status:** Documented for expansion
 
 **Description:** Only 5 basic tests (health check + genre API).
 
 **Missing Tests:**
+
 - Search API functionality
-- Filter API functionality  
+- Filter API functionality
 - Movie CRUD operations
 - User authentication
 - Frontend E2E tests
 
 **Resolution:**
+
 - ✅ Test structure verified working
 - ✅ Test database setup working
 - 📋 Plan: Add 5+ more tests in next iteration
@@ -171,12 +186,14 @@ vite v5.0.12 building for production...
 ---
 
 ### Issue 3: Monitoring/Prometheus Integration ⏳
+
 **Severity:** Low  
 **Status:** Referenced but not fully tested
 
 **Description:** Recent commit mentions Prometheus metrics but integration not verified.
 
 **Status:**
+
 - ✅ Mentioned in commit 2937b3c
 - ⏳ Not fully implemented/tested
 - 📋 Plan: Verify metrics collection in Week 5
@@ -185,18 +202,18 @@ vite v5.0.12 building for production...
 
 ## DEPLOYMENT READINESS CHECKLIST
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| **Code Quality** | ✅ READY | 0 lint errors, formatted |
-| **Testing** | ✅ READY | 5/5 tests passing |
-| **Building** | ✅ READY | Frontend & Docker builds successful |
-| **CI Pipeline** | ✅ READY | GitHub Actions working |
-| **Local Docker** | ✅ READY | Docker Compose runs successfully |
-| **Database** | ✅ READY | MongoDB Atlas connection working |
-| **Features** | ✅ READY | Search/Filter fully functional |
-| **CD Pipeline** | ⏳ BLOCKED | Awaiting Azure credentials |
-| **Cloud Deployment** | ⏳ BLOCKED | Requires credentials + secrets |
-| **Monitoring** | ⏳ PARTIAL | Needs verification |
+| Component            | Status     | Notes                               |
+| -------------------- | ---------- | ----------------------------------- |
+| **Code Quality**     | ✅ READY   | 0 lint errors, formatted            |
+| **Testing**          | ✅ READY   | 5/5 tests passing                   |
+| **Building**         | ✅ READY   | Frontend & Docker builds successful |
+| **CI Pipeline**      | ✅ READY   | GitHub Actions working              |
+| **Local Docker**     | ✅ READY   | Docker Compose runs successfully    |
+| **Database**         | ✅ READY   | MongoDB Atlas connection working    |
+| **Features**         | ✅ READY   | Search/Filter fully functional      |
+| **CD Pipeline**      | ⏳ BLOCKED | Awaiting Azure credentials          |
+| **Cloud Deployment** | ⏳ BLOCKED | Requires credentials + secrets      |
+| **Monitoring**       | ⏳ PARTIAL | Needs verification                  |
 
 ---
 
@@ -251,13 +268,13 @@ vite v5.0.12 building for production...
 
 ## WEEK 4 GOALS ACHIEVEMENT
 
-| Goal | Expected | Actual | Status |
-|------|----------|--------|--------|
-| Test pipeline with basic tests | Yes | ✅ 5/5 passing | COMPLETE |
-| Identify issues | Yes | ✅ 3 issues documented | COMPLETE |
-| Fix issues where possible | Yes | ✅ CD/Monitoring noted | COMPLETE |
-| Revised prototype | Yes | ✅ Code refined | COMPLETE |
-| Test results documented | Yes | ✅ This report | COMPLETE |
+| Goal                           | Expected | Actual                 | Status   |
+| ------------------------------ | -------- | ---------------------- | -------- |
+| Test pipeline with basic tests | Yes      | ✅ 5/5 passing         | COMPLETE |
+| Identify issues                | Yes      | ✅ 3 issues documented | COMPLETE |
+| Fix issues where possible      | Yes      | ✅ CD/Monitoring noted | COMPLETE |
+| Revised prototype              | Yes      | ✅ Code refined        | COMPLETE |
+| Test results documented        | Yes      | ✅ This report         | COMPLETE |
 
 **Week 4 Status: ✅ ALL OBJECTIVES MET**
 

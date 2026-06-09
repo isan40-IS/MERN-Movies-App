@@ -60,8 +60,12 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.cookie('jwt', '', {
     httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'strict',
     expires: new Date(0),
   });
 
