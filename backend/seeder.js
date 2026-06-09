@@ -44,7 +44,49 @@ try {
       password: hashedPassword,
       isAdmin: false,
     },
-  ]);
+    {
+      username: 'alarik',
+      email: 'alarik@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'faris',
+      email: 'faris@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'heber',
+      email: 'heber@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'cinephile',
+      email: 'cinephile@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'spiderman',
+      email: 'spiderman@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'jokerfan',
+      email: 'jokerfan@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'nolanfan',
+      email: 'nolanfan@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    ]);
 
   console.log('Users seeded');
 
