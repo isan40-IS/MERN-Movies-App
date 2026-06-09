@@ -16,14 +16,14 @@ az account set --subscription "<SUBSCRIPTION_ID_OR_NAME>"
 $suffix = Get-Random -Minimum 10000 -Maximum 99999
 $rg = "rg-mernmovies-prod-$suffix"
 $plan = "plan-mernmovies-prod-$suffix"
-$backend = "mernmovies-api-prod-$suffix"
-$frontend = "mernmovies-web-prod-$suffix"
+$backend = "mernmovies-api-node-$suffix"
+$frontend = "mernmovies-web-node-$suffix"
 $location = "southeastasia"
 
 az group create --name $rg --location $location
 az appservice plan create --resource-group $rg --name $plan --is-linux --sku B1
-az webapp create --resource-group $rg --plan $plan --name $backend --runtime "NODE|20-lts"
-az webapp create --resource-group $rg --plan $plan --name $frontend --runtime "NODE|20-lts"
+az webapp create --resource-group $rg --plan $plan --name $backend --runtime "NODE:22-lts"
+az webapp create --resource-group $rg --plan $plan --name $frontend --runtime "NODE:22-lts"
 ```
 
 ## 2. Enable Basic Auth for Publish Profile
@@ -38,8 +38,8 @@ az resource update --resource-group $rg --name ftp --namespace Microsoft.Web --r
 ## 3. Configure Web App Settings
 
 ```powershell
-az webapp config set --resource-group $rg --name $backend --linux-fx-version "NODE|20-lts" --startup-file "npm start"
-az webapp config set --resource-group $rg --name $frontend --linux-fx-version "NODE|20-lts" --startup-file "pm2 serve /home/site/wwwroot --no-daemon --spa"
+az webapp config set --resource-group $rg --name $backend --startup-file "npm start"
+az webapp config set --resource-group $rg --name $frontend --startup-file "pm2 serve /home/site/wwwroot --no-daemon --spa"
 
 az webapp config appsettings set --resource-group $rg --name $backend --settings NODE_ENV=production MONGO_URI="<mongodb-atlas-production-uri>" JWT_SECRET="<long-random-secret>" FRONTEND_ORIGIN="https://$frontend.azurewebsites.net" SCM_DO_BUILD_DURING_DEPLOYMENT=true
 az webapp config appsettings set --resource-group $rg --name $frontend --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false
@@ -62,7 +62,7 @@ VITE_API_URL=https://<backend-webapp-name>.azurewebsites.net
 
 1. Push the branch containing the production CD workflow to GitHub.
 2. Open GitHub Actions.
-3. Run `CD Pipeline`, or push to `main`.
+3. Run `CD Pipeline` manually.
 
 ## 6. Verify
 
@@ -77,3 +77,14 @@ Open:
 - `https://<frontend-webapp-name>.azurewebsites.net`
 
 Then test search/filter and register/login.
+
+## Current Production Deployment
+
+- Resource group: `rg-mern-movies-production`
+- App Service plan: `plan-mernmovies-prod-81448`
+- Backend app: `mernmovies-api-node-81448`
+- Frontend app: `mernmovies-web-node-81448`
+- Backend URL: `https://mernmovies-api-node-81448.azurewebsites.net`
+- Frontend URL: `https://mernmovies-web-node-81448.azurewebsites.net`
+- Runtime: `NODE|22-lts`
+- Deployment method: App Service ZIP/code deploy, no Docker/ACR
