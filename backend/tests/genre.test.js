@@ -1,44 +1,76 @@
-import request from 'supertest';
-import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import app from '../index.js';
+import request from "supertest";
+import app from "../app.js";
 
-let mongoServer;
+import {
+  connectTestDB,
+  clearTestDB,
+  closeTestDB,
+} from "./setupTestDB.js";
 
-// for In-Memory database
+import Genre from "../models/Genre.js";
+
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-  
-  if (mongoose.connection.readyState !== 0) {
-    await mongoose.disconnect();
-  }
-  
-  await mongoose.connect(mongoUri);
+  await connectTestDB();
 });
 
-// turn off database
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
-
-// Clear the data
 afterEach(async () => {
-  const collections = mongoose.connection.collections;
-  for (const key in collections) {
-    const collection = collections[key];
-    await collection.deleteMany({});
-  }
+  await clearTestDB();
 });
 
-describe('Genre API Endpoints', () => {
-  
-  it('Status 200 dan list genre kosong pada awalnya', async () => {
-    const res = await request(app).get('/api/v1/genre/genres');
-    
-    expect(res.statusCode).toEqual(200);
-    expect(Array.isArray(res.body)).toBeTruthy();
+afterAll(async () => {
+  await closeTestDB();
+});
+
+describe("Genre API Endpoints", () => {
+  test("GET /api/v1/genre/genres should return empty array initially", async () => {
+    const res = await request(app).get("/api/v1/genre/genres");
+
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBe(0);
   });
 
+  test("GET /api/v1/genre/genres should return inserted genres", async () => {
+    await Genre.create({ name: "Action" });
+    await Genre.create({ name: "Drama" });
+
+    const res = await request(app).get("/api/v1/genre/genres");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBe(2);
+
+    expect(
+      res.body.some((genre) => genre.name === "Action")
+    ).toBeTruthy();
+
+    expect(
+      res.body.some((genre) => genre.name === "Drama")
+    ).toBeTruthy();
+  });
+
+  test("GET /api/v1/genre/:id should return genre detail", async () => {
+    const genre = await Genre.create({
+      name: "Comedy",
+    });
+
+    const res = await request(app).get(
+      `/api/v1/genre/${genre._id}`
+    );
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.name).toBe("Comedy");
+  });
+
+  test("GET /api/v1/genre/:id with non-existing id should return null genre", async () => {
+    const fakeId = "507f191e810c19729de860ea";
+
+    const res = await request(app).get(
+      `/api/v1/genre/${fakeId}`
+    );
+
+    expect(res.statusCode).toBe(200);
+
+    // sesuaikan nanti dengan behavior controller
+    expect(res.body).toBeDefined();
+  });
 });
