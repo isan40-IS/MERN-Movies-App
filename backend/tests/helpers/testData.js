@@ -3,6 +3,7 @@ import app from '../../app.js';
 import User from '../../models/User.js';
 import Genre from '../../models/Genre.js';
 import Movie from '../../models/Movie.js';
+import bcrypt from 'bcryptjs';
 
 export const createTestUser = async ({
   username = 'Test User',
@@ -10,10 +11,13 @@ export const createTestUser = async ({
   password = 'password123',
   isAdmin = false,
 } = {}) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const user = await User.create({
+    name: username,
     username,
     email,
-    password,
+    password: hashedPassword,
     isAdmin,
   });
 

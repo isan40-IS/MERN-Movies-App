@@ -68,12 +68,18 @@ describe('Review API', () => {
       const { user, agent: userAgent } = await createLoggedInUserAgent();
       const movie = await createTestMovie({ name: 'Movie With Comment' });
 
-      await userAgent.post(`/api/v1/movies/${movie._id}/reviews`).send({
+      const addReviewRes = await userAgent.post(`/api/v1/movies/${movie._id}/reviews`).send({
         rating: 5,
         comment: 'Comment to delete.',
       });
 
+      expect([200, 201]).toContain(addReviewRes.statusCode);
+
       const movieWithReview = await Movie.findById(movie._id);
+
+      expect(movieWithReview).not.toBeNull();
+      expect(movieWithReview.reviews.length).toBe(1);
+
       const reviewId = movieWithReview.reviews[0]._id;
 
       const { agent: adminAgent } = await createLoggedInAdminAgent();

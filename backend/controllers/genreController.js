@@ -71,13 +71,14 @@ const listGenres = asyncHandler(async (req, res) => {
 });
 
 const readGenre = asyncHandler(async (req, res) => {
-  try {
-    const genre = await Genre.findOne({ _id: req.params.id });
-    res.json(genre);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json(error.message);
+  const genre = await Genre.findById(req.params.id);
+
+  if (!genre) {
+    res.status(404);
+    throw new Error('Genre not found');
   }
+
+  res.status(200).json(genre);
 });
 
 export { createGenre, updateGenre, removeGenre, listGenres, readGenre };
