@@ -1,27 +1,16 @@
 name: CD Pipeline
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target deployment environment'
-        required: true
-        default: production
-        type: choice
-        options:
-          - production
 
 jobs:
   deploy-production:
-    name: Validate, Build, Push & Deploy Production
-    if: github.event.inputs.environment == 'production'
+    name: Build & Deploy Production
     runs-on: ubuntu-latest
     environment:
       name: production
-
-    env:
-      BACKEND_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/mern-movies-backend:${{ github.sha }}
-      FRONTEND_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/mern-movies-frontend:${{ github.sha }}
 
     steps:
       - name: Checkout repository
@@ -50,83 +39,35 @@ jobs:
 
       - name: Build frontend assets
         run: npm run build:frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Login to Azure Container Registry
-        run: az acr login --name "${{ secrets.ACR_NAME }}"
-
-      - name: Build backend image
-        run: docker build -f Dockerfile.backend -t "$BACKEND_IMAGE" .
-
-      - name: Build frontend image
+      - name: Create backend deployment package
         run: |
-          docker build \
-            -f Dockerfile.frontend \
-            --build-arg VITE_API_URL="${{ secrets.VITE_API_URL }}" \
-            -t "$FRONTEND_IMAGE" .
+          mkdir -p deployment/backend
+          cp -r backend deployment/backend/
+          cp package*.json deployment/backend/
+          cp .babelrc deployment/backend/ 2>/dev/null || true
+          cp prometheus.yml deployment/backend/ 2>/dev/null || true
 
-      - name: Push backend image
-        run: docker push "$BACKEND_IMAGE"
-
-      - name: Push frontend image
-        run: docker push "$FRONTEND_IMAGE"
-
-      - name: Configure backend app settings
+      - name: Create frontend deployment package
         run: |
-          az webapp config appsettings set \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --name "${{ secrets.BACKEND_WEBAPP_NAME }}" \
-            --settings \
-              NODE_ENV=production \
-              PORT=3000 \
-              WEBSITES_PORT=3000 \
-              MONGO_URI="${{ secrets.MONGO_URI_PRODUCTION }}" \
-              JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-              FRONTEND_ORIGIN="${{ secrets.FRONTEND_ORIGIN }}"
+          mkdir -p deployment/frontend
+          cp -r frontend/dist/. deployment/frontend/
 
-      - name: Configure frontend app settings
-        run: |
-          az webapp config appsettings set \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}" \
-            --settings \
-              WEBSITES_PORT=4173
-
-      - name: Enable managed identity ACR pull
-        run: |
-          az webapp config set \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --name "${{ secrets.BACKEND_WEBAPP_NAME }}" \
-            --generic-configurations '{"acrUseManagedIdentityCreds": true}'
-          az webapp config set \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}" \
-            --generic-configurations '{"acrUseManagedIdentityCreds": true}'
-
-      - name: Deploy backend image
+      - name: Deploy backend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.BACKEND_WEBAPP_NAME }}
-          images: ${{ env.BACKEND_IMAGE }}
+          publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_PROFILE }}
+          package: deployment/backend
 
-      - name: Deploy frontend image
+      - name: Deploy frontend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.FRONTEND_WEBAPP_NAME }}
-          images: ${{ env.FRONTEND_IMAGE }}
-
-      - name: Restart web apps
-        run: |
-          az webapp restart \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --name "${{ secrets.BACKEND_WEBAPP_NAME }}"
-          az webapp restart \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}"
+          publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
+          package: deployment/frontend
 
       - name: Smoke test production backend
         run: curl -f "${{ secrets.VITE_API_URL }}/api/v1/health"

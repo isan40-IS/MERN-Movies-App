@@ -9,6 +9,7 @@
     "frontend": "npm run dev --prefix frontend",
     "fullstack": "concurrently \"npm run backend\" \"npm run frontend\"",
     "seed": "node backend/seeder.js",
+    "start": "node backend/index.js",
     "setup": "npm ci && npm ci --prefix frontend",
     "setup:seed": "npm run setup && npm run seed",
     "start:full": "npm run setup:seed && npm run fullstack",
