@@ -6,32 +6,26 @@ on:
       environment:
         description: 'Target deployment environment'
         required: true
-        default: staging
+        default: production
         type: choice
         options:
-          - staging
           - production
 
-env:
-  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
-  BACKEND_IMAGE_NAME: mernmoviesapp-backend
-  FRONTEND_IMAGE_NAME: mernmoviesapp-frontend
-
 jobs:
-  build-and-push:
-    name: Build and Push Images to ACR
+  deploy-production:
+    name: Validate, Build, Push & Deploy Production
+    if: github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
+    environment:
+      name: production
 
-    outputs:
-      image_tag: ${{ steps.vars.outputs.image_tag }}
+    env:
+      BACKEND_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/mern-movies-backend:${{ github.sha }}
+      FRONTEND_IMAGE: ${{ secrets.ACR_LOGIN_SERVER }}/mern-movies-frontend:${{ github.sha }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set image tag
-        id: vars
-        run: echo "image_tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,96 +51,82 @@ jobs:
       - name: Build frontend assets
         run: npm run build:frontend
 
-      - name: Login to ACR
-        uses: docker/login-action@v3
+      - name: Azure login
+        uses: azure/login@v2
         with:
-          registry: ${{ secrets.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        run: az acr login --name "${{ secrets.ACR_NAME }}"
 
       - name: Build backend image
-        run: |
-          docker build \
-            -f Dockerfile.backend \
-            -t $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }} \
-            -t $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest \
-            .
+        run: docker build -f Dockerfile.backend -t "$BACKEND_IMAGE" .
 
       - name: Build frontend image
         run: |
           docker build \
             -f Dockerfile.frontend \
-            --build-arg VITE_API_BASE_URL=${{ secrets.STAGING_BACKEND_URL }} \
-            -t $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }} \
-            -t $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest \
-            .
+            --build-arg VITE_API_URL="${{ secrets.VITE_API_URL }}" \
+            -t "$FRONTEND_IMAGE" .
 
       - name: Push backend image
-        run: |
-          docker push $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }}
-          docker push $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest
+        run: docker push "$BACKEND_IMAGE"
 
       - name: Push frontend image
+        run: docker push "$FRONTEND_IMAGE"
+
+      - name: Configure backend app settings
         run: |
-          docker push $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:${{ steps.vars.outputs.image_tag }}
-          docker push $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest
+          az webapp config appsettings set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.BACKEND_WEBAPP_NAME }}" \
+            --settings \
+              NODE_ENV=production \
+              PORT=3000 \
+              WEBSITES_PORT=3000 \
+              MONGO_URI="${{ secrets.MONGO_URI_PRODUCTION }}" \
+              JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              FRONTEND_ORIGIN="${{ secrets.FRONTEND_ORIGIN }}"
 
-  deploy-staging:
-    name: Deploy to Staging
-    needs: build-and-push
-    if: github.event.inputs.environment == 'staging'
-    runs-on: ubuntu-latest
-    environment:
-      name: staging
-
-    steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_STAGING }}
-
-      - name: Deploy backend container to staging
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ secrets.AZURE_BACKEND_WEBAPP_NAME_STAGING }}
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-backend:${{ needs.build-and-push.outputs.image_tag }}
-
-      - name: Deploy frontend container to staging
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ secrets.AZURE_FRONTEND_WEBAPP_NAME_STAGING }}
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-frontend:${{ needs.build-and-push.outputs.image_tag }}
-
-      - name: Smoke test staging backend
+      - name: Configure frontend app settings
         run: |
-          curl -f ${{ secrets.STAGING_BACKEND_URL }}/api/v1/health
+          az webapp config appsettings set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}" \
+            --settings \
+              WEBSITES_PORT=4173
 
-  deploy-production:
-    name: Deploy to Production
-    needs: build-and-push
-    if: github.event.inputs.environment == 'production'
-    runs-on: ubuntu-latest
-    environment:
-      name: production
+      - name: Enable managed identity ACR pull
+        run: |
+          az webapp config set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.BACKEND_WEBAPP_NAME }}" \
+            --generic-configurations '{"acrUseManagedIdentityCreds": true}'
+          az webapp config set \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}" \
+            --generic-configurations '{"acrUseManagedIdentityCreds": true}'
 
-    steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_PRODUCTION }}
-
-      - name: Deploy backend container to production
+      - name: Deploy backend image
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_BACKEND_WEBAPP_NAME_PRODUCTION }}
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-backend:${{ needs.build-and-push.outputs.image_tag }}
+          app-name: ${{ secrets.BACKEND_WEBAPP_NAME }}
+          images: ${{ env.BACKEND_IMAGE }}
 
-      - name: Deploy frontend container to production
+      - name: Deploy frontend image
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_FRONTEND_WEBAPP_NAME_PRODUCTION }}
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/mernmoviesapp-frontend:${{ needs.build-and-push.outputs.image_tag }}
+          app-name: ${{ secrets.FRONTEND_WEBAPP_NAME }}
+          images: ${{ env.FRONTEND_IMAGE }}
+
+      - name: Restart web apps
+        run: |
+          az webapp restart \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.BACKEND_WEBAPP_NAME }}"
+          az webapp restart \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --name "${{ secrets.FRONTEND_WEBAPP_NAME }}"
 
       - name: Smoke test production backend
-        run: |
-          curl -f ${{ secrets.PRODUCTION_BACKEND_URL }}/api/v1/health
+        run: curl -f "${{ secrets.VITE_API_URL }}/api/v1/health"

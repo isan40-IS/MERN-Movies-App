@@ -44,15 +44,23 @@ Build a DevOps pipeline for the MERN Movies App to automate code quality, testin
 - [x] Add root lint and test scripts
 - [x] Add backend health test using Jest and Supertest
 - [x] Add deployment skeleton with Azure placeholders
+- [x] Test pipeline with basic tests (Week 4)
+- [x] Add search/filter API tests (Week 4)
+- [x] Verify all tests passing (11/11 - Week 4)
+- [x] Document Week 4 progress and issues
 - [ ] Extend workflow to actual ACR and Azure App Service when credentials are available
 
-## Next Steps
+## Week 4 Completion Summary
 
-1. Install additional dev dependencies in root:
-   - `eslint`
-   - `prettier`
-   - `jest`
-   - `supertest`
-2. Run `npm run lint` and `npm run test` locally.
-3. Add Azure secrets to GitHub and enable `cd.yml` deployment.
-4. Incrementally add project features and monitoring once the pipeline is stable.
+**Status: ✅ COMPLETE**
+
+All Week 4 testing and refinement objectives achieved:
+
+- ✅ 11/11 tests passing (includes 6 new search/filter tests)
+- ✅ Code quality verified (0 linting errors)
+- ✅ Docker builds successful
+- ✅ CI pipeline tested and working
+- ✅ Issues identified and documented
+- ✅ Progress reports created
+
+See `docs/WEEK4_PROGRESS.md` and `docs/WEEK4_ASSESSMENT.md` for complete details.
