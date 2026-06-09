@@ -86,5 +86,19 @@ jobs:
 
       - name: Smoke test backend
         run: |
-          sleep 90
-          curl -f "${{ steps.config.outputs.api_url }}/api/v1/health"
+          echo "Waiting for Azure App Service to pull and start the new container..."
+          sleep 120
+
+          for i in {1..10}; do
+            echo "Health check attempt $i..."
+            if curl --fail --silent --show-error --max-time 15 "${{ steps.config.outputs.api_url }}/api/v1/health"; then
+              echo "Backend is healthy."
+              exit 0
+            fi
+
+            echo "Backend not ready yet. Retrying in 30 seconds..."
+            sleep 30
+          done
+
+          echo "Backend health check failed after multiple attempts."
+          exit 1
