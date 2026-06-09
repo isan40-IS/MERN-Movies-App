@@ -80,8 +80,9 @@ export const createLoggedInAdminAgent = async () => {
   };
 };
 
-export const createTestGenre = async ({ name = 'Action' } = {}) => {
-  return Genre.create({ name });
+export const createTestGenre = async ({ name } = {}) => {
+  const genreName = name || `A${Math.floor(Math.random() * 1000000)}`;
+  return Genre.create({ name: genreName });
 };
 
 export const createTestMovie = async ({

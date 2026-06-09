@@ -3,7 +3,7 @@ import asyncHandler from './asyncHandler.js';
 import User from '../models/User.js';
 
 export const authenticate = asyncHandler(async (req, res, next) => {
-  let token = req.cookies?.jwt;
+  const token = req.cookies?.jwt;
 
   if (!token) {
     res.status(401);

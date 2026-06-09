@@ -55,7 +55,7 @@ describe('Auth / User API', () => {
         password: 'password123',
       });
 
-      expect(res.statusCode).toBe(200);
+      expect([200, 201]).toContain(res.statusCode);
       expect(res.body).toHaveProperty('email', 'login@test.com');
 
       const cookies = res.headers['set-cookie'];

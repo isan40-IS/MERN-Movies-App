@@ -29,7 +29,7 @@ app.use('/api/v1/upload', uploadRoutes);
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   const statusCode = res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
 
   res.status(statusCode).json({
