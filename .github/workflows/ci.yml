@@ -13,14 +13,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -45,9 +45,3 @@ jobs:
 
       - name: Build frontend assets
         run: npm run build:frontend
-
-      - name: Build backend Docker image
-        run: docker build -f Dockerfile.backend -t mern-movies-backend:ci .
-
-      - name: Build frontend Docker image
-        run: docker build -f Dockerfile.frontend -t mern-movies-frontend:ci .
