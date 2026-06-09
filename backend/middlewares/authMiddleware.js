@@ -4,10 +4,8 @@ import asyncHandler from "./asyncHandler.js";
 
 // Check if the user is authenticated or not
 const authenticate = asyncHandler(async (req, res, next) => {
-  const token;
-
   // Read JWT from the 'jwt' cookie
-  token = req.cookies.jwt;
+  const token = req.cookies.jwt;
 
   if (token) {
     try {
