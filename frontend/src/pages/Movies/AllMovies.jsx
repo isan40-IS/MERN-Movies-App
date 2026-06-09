@@ -1,20 +1,20 @@
-import { useGetAllMoviesQuery } from "../../redux/api/movies";
-import { useFetchGenresQuery } from "../../redux/api/genre";
+import { useGetAllMoviesQuery } from '../../redux/api/movies';
+import { useFetchGenresQuery } from '../../redux/api/genre';
 import {
   useGetNewMoviesQuery,
   useGetTopMoviesQuery,
   useGetRandomMoviesQuery,
-} from "../../redux/api/movies";
-import MovieCard from "./MovieCard";
-import { useEffect, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import banner from "../../assets/banner.jpg";
+} from '../../redux/api/movies';
+import MovieCard from './MovieCard';
+import { useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import banner from '../../assets/banner.jpg';
 import {
   setMoviesFilter,
   setFilteredMovies,
   setMovieYears,
   setUniqueYears,
-} from "../../redux/features/movies/moviesSlice";
+} from '../../redux/features/movies/moviesSlice';
 
 const AllMovies = () => {
   const dispatch = useDispatch();
@@ -41,27 +41,19 @@ const AllMovies = () => {
   }, [data, dispatch, movieYears, uniqueYears]);
 
   const handleSearchChange = (e) => {
-    dispatch(
-      setMoviesFilter({ searchTerm: e.target.value, selectedSort: '' })
-    );
+    dispatch(setMoviesFilter({ searchTerm: e.target.value, selectedSort: '' }));
   };
 
   const handleGenreChange = (genreId) => {
-    dispatch(
-      setMoviesFilter({ selectedGenre: genreId, selectedSort: '' })
-    );
+    dispatch(setMoviesFilter({ selectedGenre: genreId, selectedSort: '' }));
   };
 
   const handleYearChange = (year) => {
-    dispatch(
-      setMoviesFilter({ selectedYear: year, selectedSort: '' })
-    );
+    dispatch(setMoviesFilter({ selectedYear: year, selectedSort: '' }));
   };
 
   const handleRatingChange = (rating) => {
-    dispatch(
-      setMoviesFilter({ selectedRating: rating, selectedSort: '' })
-    );
+    dispatch(setMoviesFilter({ selectedRating: rating, selectedSort: '' }));
   };
 
   const handleSortChange = (sortOption) => {
@@ -95,9 +87,7 @@ const AllMovies = () => {
 
             <div className="relative z-10 text-center text-white mt-[10rem]">
               <h1 className="text-8xl font-bold mb-4">The Movies Hub</h1>
-              <p className="text-2xl">
-                Cinematic Odyssey: Unveiling the Magic of Movies
-              </p>
+              <p className="text-2xl">Cinematic Odyssey: Unveiling the Magic of Movies</p>
             </div>
 
             <section className="absolute -bottom-[5rem]">

@@ -1,15 +1,18 @@
 # MERN Movies App DevOps Roadmap
 
 ## Project Objective
+
 Build a DevOps pipeline for the MERN Movies App to automate code quality, testing, container builds, and cloud deployment.
 
 ## Week 3 Focus
+
 - Establish CI workflow with automated linting, testing, and frontend build.
 - Add containerization support for backend and frontend.
 - Create documentation for the pipeline and deployment assumptions.
 - Build a prototype workflow skeleton for Azure deployment and ACR integration.
 
 ## Pipeline Architecture
+
 1. Development
    - Code changes pushed to GitHub branches.
    - Local development uses `npm run fullstack` for backend and frontend.
@@ -34,6 +37,7 @@ Build a DevOps pipeline for the MERN Movies App to automate code quality, testin
    - `PIPELINE_PLAN.md` documents the roadmap and Week 3 scope.
 
 ## Milestones
+
 - [x] Inspect source repo and existing app structure
 - [x] Add GitHub Actions CI workflow
 - [x] Add Dockerfiles and compose configuration
@@ -43,6 +47,7 @@ Build a DevOps pipeline for the MERN Movies App to automate code quality, testin
 - [ ] Extend workflow to actual ACR and Azure App Service when credentials are available
 
 ## Next Steps
+
 1. Install additional dev dependencies in root:
    - `eslint`
    - `prettier`
