@@ -6,7 +6,13 @@ let mongoServer;
 export const connectTestDB = async () => {
   mongoServer = await MongoMemoryServer.create();
 
-  await mongoose.connect(mongoServer.getUri());
+  const mongoUri = mongoServer.getUri();
+
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
+
+  await mongoose.connect(mongoUri);
 };
 
 export const clearTestDB = async () => {
@@ -18,6 +24,12 @@ export const clearTestDB = async () => {
 };
 
 export const closeTestDB = async () => {
-  await mongoose.connection.close();
-  await mongoServer.stop();
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+  }
+
+  if (mongoServer) {
+    await mongoServer.stop();
+  }
 };

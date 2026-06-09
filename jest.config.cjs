@@ -1,7 +1,7 @@
 module.exports = {
   testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.js'],
-  transform: {
-    '^.+\\.js$': 'babel-jest',
-  },
+  testMatch: ['**/backend/tests/**/*.test.js'],
+  verbose: true,
+  detectOpenHandles: true,
+  forceExit: true,
 };
