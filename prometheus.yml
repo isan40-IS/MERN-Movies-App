@@ -1,9 +1,9 @@
 global:
-  scrape_interval: 5s # Prometheus akan menarik data setiap 5 detik
+  scrape_interval: 5s
 
 scrape_configs:
-  - job_name: 'movies-backend'
+  - job_name: 'movies-backend-production'
+    metrics_path: '/metrics'
+    scheme: 'https'
     static_configs:
-      # Karena Prometheus jalan di Docker dan backend jalan di laptopmu,
-      # kita gunakan 'host.docker.internal' untuk menembak ke localhost:3000
-      - targets: ['host.docker.internal:3000']
+      - targets: ['mernmovies-api-node-81448.azurewebsites.net']

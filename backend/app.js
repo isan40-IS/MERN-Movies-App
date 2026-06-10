@@ -21,6 +21,28 @@ app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', service: 'backend', timestamp: new Date().toISOString() });
 });
 
+app.use((req, res, next) => {
+  const endTimer = httpRequestDurationMicroseconds.startTimer();
+
+  res.on('finish', () => {
+    const route = req.route ? req.route.path : req.path;
+
+    httpRequestCounter.inc({
+      method: req.method,
+      route: route,
+      status_code: res.statusCode,
+    });
+
+    endTimer({
+      method: req.method,
+      route: route,
+      status_code: res.statusCode,
+    });
+  });
+
+  next();
+});
+
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/genre', genreRoutes);
 app.use('/api/v1/movies', moviesRoutes);
