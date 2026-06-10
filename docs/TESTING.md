@@ -18,9 +18,9 @@ Digunakan sebagai test runner.
 
 Fungsi:
 
-* Menjalankan seluruh test case
-* Menampilkan hasil pass/fail
-* Mengukur coverage apabila diperlukan
+- Menjalankan seluruh test case
+- Menampilkan hasil pass/fail
+- Mengukur coverage apabila diperlukan
 
 ## Supertest
 
@@ -28,9 +28,9 @@ Digunakan untuk melakukan HTTP request terhadap Express application tanpa harus 
 
 Fungsi:
 
-* Testing endpoint REST API
-* Validasi response status
-* Validasi response body
+- Testing endpoint REST API
+- Validasi response status
+- Validasi response body
 
 ## MongoDB Memory Server
 
@@ -38,9 +38,9 @@ Digunakan untuk membuat database MongoDB sementara selama testing.
 
 Fungsi:
 
-* Menghindari penggunaan MongoDB Atlas saat testing
-* Menjamin test bersifat isolated
-* Menghindari perubahan data produksi
+- Menghindari penggunaan MongoDB Atlas saat testing
+- Menjamin test bersifat isolated
+- Menghindari perubahan data produksi
 
 ---
 
@@ -95,13 +95,13 @@ GET /api/v1/health
 
 Scenario:
 
-* Backend running
-* Health endpoint accessible
+- Backend running
+- Health endpoint accessible
 
 Expected Result:
 
-* Status 200
-* Backend health information returned
+- Status 200
+- Backend health information returned
 
 Purpose:
 
@@ -129,13 +129,13 @@ DELETE /api/v1/genre/:id
 
 Scenario:
 
-* Get all genres
-* Get genre by id
-* Invalid genre id
-* Create genre as admin
-* Create genre without authentication
-* Update genre
-* Delete genre
+- Get all genres
+- Get genre by id
+- Invalid genre id
+- Create genre as admin
+- Create genre without authentication
+- Update genre
+- Delete genre
 
 Purpose:
 
@@ -166,11 +166,11 @@ DELETE /api/v1/movies/delete-movie/:id
 
 Scenario:
 
-* Public movie retrieval
-* Movie creation
-* Movie update
-* Movie deletion
-* Authorization validation
+- Public movie retrieval
+- Movie creation
+- Movie update
+- Movie deletion
+- Authorization validation
 
 Purpose:
 
@@ -199,14 +199,14 @@ GET  /api/v1/users
 
 Scenario:
 
-* Register user
-* Duplicate registration
-* Login
-* Invalid login
-* Logout
-* Get profile
-* Update profile
-* Admin access
+- Register user
+- Duplicate registration
+- Login
+- Invalid login
+- Logout
+- Get profile
+- Update profile
+- Admin access
 
 Purpose:
 
@@ -231,11 +231,11 @@ DELETE /api/v1/movies/delete-comment
 
 Scenario:
 
-* Add review
-* Duplicate review prevention
-* Unauthorized review
-* Delete review
-* Admin moderation
+- Add review
+- Duplicate review prevention
+- Unauthorized review
+- Delete review
+- Admin moderation
 
 Purpose:
 
@@ -253,11 +253,11 @@ backend/tests/admin.test.js
 
 Scenario:
 
-* Admin can create genre
-* User cannot create genre
-* Guest cannot create movie
-* Admin can delete movie
-* User cannot delete movie
+- Admin can create genre
+- User cannot create genre
+- Guest cannot create movie
+- Admin can delete movie
+- User cannot delete movie
 
 Purpose:
 
@@ -281,9 +281,9 @@ POST /api/v1/upload
 
 Scenario:
 
-* Upload valid image
-* Upload without file
-* Invalid file upload
+- Upload valid image
+- Upload without file
+- Invalid file upload
 
 Purpose:
 
@@ -300,11 +300,11 @@ Problem:
 ESLint menganggap:
 
 ```javascript
-describe()
-it()
-expect()
-beforeAll()
-afterAll()
+describe();
+it();
+expect();
+beforeAll();
+afterAll();
 ```
 
 sebagai undefined.
@@ -341,9 +341,9 @@ Error pada middleware diteruskan sebagai internal error.
 
 Resolution:
 
-* Memperbaiki asyncHandler
-* Menambahkan centralized error handler
-* Memastikan middleware auth mengembalikan status yang sesuai
+- Memperbaiki asyncHandler
+- Menambahkan centralized error handler
+- Memastikan middleware auth mengembalikan status yang sesuai
 
 ---
 
@@ -427,9 +427,9 @@ Perbedaan validasi file upload dan fixture image yang digunakan saat testing.
 
 Resolution:
 
-* Menyesuaikan upload test dengan konfigurasi multer
-* Memperbaiki file filter
-* Menambahkan validasi upload image
+- Menyesuaikan upload test dengan konfigurasi multer
+- Memperbaiki file filter
+- Menambahkan validasi upload image
 
 ---
 
