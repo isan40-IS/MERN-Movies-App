@@ -450,7 +450,21 @@ Upload API
 Total automated backend tests:
 
 ```text
-48 test cases
+51 test cases
 ```
 
-Testing berhasil diintegrasikan ke pipeline CI/CD sehingga setiap perubahan kode akan divalidasi sebelum proses build dan deployment dilakukan.
+Coverage backend dikonfigurasi di `jest.config.cjs` dengan minimum global 60% untuk statements, branches, functions, dan lines. Report coverage dibuat dalam format text, LCOV, dan Cobertura:
+
+```text
+coverage/lcov.info
+coverage/cobertura-coverage.xml
+```
+
+Frontend juga memiliki automated testing menggunakan Vitest dan React Testing Library untuk route guards, form auth, Redux movie filters, RTK Query URL construction, dan halaman search/filter movie. Report frontend dibuat di:
+
+```text
+frontend/coverage/lcov.info
+frontend/coverage/cobertura-coverage.xml
+```
+
+Testing berhasil diintegrasikan ke pipeline CI/CD sehingga setiap perubahan kode akan divalidasi sebelum proses build dan deployment dilakukan. CD pipeline menjalankan validation job terlebih dahulu sehingga deployment tidak berjalan apabila lint, format, test, atau coverage gagal.

@@ -19,7 +19,7 @@ env:
 
 jobs:
   validate:
-    name: Validate Codebase
+    name: Validate Codebase Before Deployment
     runs-on: ubuntu-latest
 
     steps:
@@ -44,8 +44,14 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Run backend tests
-        run: npm test
+      - name: Run backend tests with coverage
+        run: npm run test:backend:coverage
+
+      - name: Run frontend tests with coverage
+        run: npm run test:frontend:coverage
+
+      - name: Build frontend assets
+        run: npm run build:frontend
 
   deploy-staging-docker:
     name: Deploy Staging with Docker and ACR
