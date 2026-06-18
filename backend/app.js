@@ -11,10 +11,13 @@ import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
 
-const defaultAllowedOrigins = ['http://localhost:5173', 'http://localhost:4173'];
-const allowedOrigins = (
-  process.env.FRONTEND_ORIGIN ? process.env.FRONTEND_ORIGIN.split(',') : defaultAllowedOrigins
-)
+const defaultAllowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'https://mernmovies-web-node-81448.azurewebsites.net',
+];
+const configuredOrigins = process.env.FRONTEND_ORIGIN ? process.env.FRONTEND_ORIGIN.split(',') : [];
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...configuredOrigins])]
   .map((origin) => origin.trim())
   .filter(Boolean);
 
