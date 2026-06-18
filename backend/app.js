@@ -11,16 +11,22 @@ import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173'];
+const defaultAllowedOrigins = ['http://localhost:5173', 'http://localhost:4173'];
+const allowedOrigins = (
+  process.env.FRONTEND_ORIGIN ? process.env.FRONTEND_ORIGIN.split(',') : defaultAllowedOrigins
+)
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin(origin, callback) {
       if (!origin) return callback(null, true);
 
-      // Tolak origin yang tidak ada di daftar
-      if (allowedOrigins.indexOf(origin) === -1) {
-        return callback(new Error('Not allowed by CORS'), false);
+      if (!allowedOrigins.includes(origin)) {
+        return callback(new Error('Not allowed by CORS'));
       }
+
       return callback(null, true);
     },
     credentials: true,
@@ -31,26 +37,37 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const httpRequestCounter = new client.Counter({
-  name: 'http_requests_total',
-  help: 'Total jumlah HTTP request',
-  labelNames: ['method', 'route', 'status_code'],
+client.collectDefaultMetrics({
+  register: client.register,
 });
 
-const httpRequestDurationMicroseconds = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Durasi HTTP request dalam detik',
-  labelNames: ['method', 'route', 'status_code'],
-  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
-});
+const httpRequestCounter =
+  client.register.getSingleMetric('http_requests_total') ||
+  new client.Counter({
+    name: 'http_requests_total',
+    help: 'Total HTTP requests',
+    labelNames: ['method', 'route', 'status_code'],
+  });
+
+const httpRequestDurationSeconds =
+  client.register.getSingleMetric('http_request_duration_seconds') ||
+  new client.Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'HTTP request duration in seconds',
+    labelNames: ['method', 'route', 'status_code'],
+    buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10],
+  });
 
 app.use((req, res, next) => {
-  const endTimer = httpRequestDurationMicroseconds.startTimer();
+  const endTimer = httpRequestDurationSeconds.startTimer();
+
   res.on('finish', () => {
     const route = req.route ? req.route.path : req.path;
+
     httpRequestCounter.inc({ method: req.method, route: route, status_code: res.statusCode });
     endTimer({ method: req.method, route: route, status_code: res.statusCode });
   });
+
   next();
 });
 

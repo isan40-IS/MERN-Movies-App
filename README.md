@@ -1,24 +1,42 @@
-# MERN Movies App
+# MERN Movies App DevOps Pipeline
 
 Final project repository for **ES234632 - Pengembangan Sistem dan Operasi**.
 
-This project is a MERN movies platform extended with DevOps practices: automated quality gates, backend and frontend coverage reports, CI/CD workflows, Docker support, Azure App Service deployment, and production smoke checks.
+This project takes the original `HuXn-WebDev/MERN-Movies-App` MERN movie app and extends it into a DevOps final project with automated quality gates, CI/CD workflows, Docker support, Azure App Service deployment, production smoke checks, and Prometheus metrics.
 
-## Group
+## Team
 
-- Group name: `[Fill group name]`
-- Members:
-  - `[Name] - [Student ID]`
-  - `[Name] - [Student ID]`
-  - `[Name] - [Student ID]`
+- Group name: MERN Movies DevOps Team
+- Contributors:
+  - Hizkia Crisantino (`@isan40-IS`)
+  - Heber Bryan Hutajulu (`@heberbryan`, 5026231204)
+  - farisabqori (`@farisabqori`)
+  - CowCatt (`@CowCatt`)
 
-## Features
+## Project Goal
 
-- Public movie browsing, movie detail, newest/top/random movie sections
+The movie app is the sample application. The real final-project goal is to prove that the team can automate a software delivery lifecycle:
+
+```mermaid
+flowchart LR
+  dev["Developer change"] --> git["GitHub main / pull request"]
+  git --> ci["CI: install, lint, format, test, coverage, build"]
+  ci -->|pass| cd["CD: manual staging or production workflow"]
+  ci -->|fail| fix["Fix code before deployment"]
+  fix --> git
+  cd --> staging["Staging: Docker image path"]
+  cd --> prod["Production: Azure App Service package deploy"]
+  prod --> smoke["Smoke checks: health, movies API, frontend"]
+  prod --> metrics["Monitoring: /metrics for Prometheus"]
+```
+
+## Application Features
+
+- Public movie browsing, details, newest/top/random movie sections
 - Movie search and filtering by name, genre, year, and rating
 - User registration, login, logout, and profile update
 - Cookie-based JWT authentication
-- Admin-only genre and movie management
+- Admin-only movie and genre management
 - Movie reviews and admin comment moderation
 - Image upload for movie assets
 - Backend health endpoint and Prometheus metrics endpoint
@@ -31,129 +49,55 @@ This project is a MERN movies platform extended with DevOps practices: automated
 | Backend    | Node.js, Express, MongoDB, Mongoose                                   |
 | Auth       | JWT stored in HTTP-only cookies                                       |
 | Testing    | Jest, Supertest, MongoDB Memory Server, Vitest, React Testing Library |
-| Quality    | ESLint, Prettier, coverage gates                                      |
-| DevOps     | GitHub Actions, Docker, Docker Compose, Azure App Service             |
+| Quality    | ESLint, Prettier, coverage thresholds                                 |
+| CI/CD      | GitHub Actions                                                        |
+| Containers | Docker, Docker Compose                                                |
+| Deployment | Azure App Service                                                     |
 | Monitoring | Prometheus metrics endpoint, Prometheus/Grafana compose services      |
 
-## Architecture
+## Repository Structure
 
 ```text
-Browser
-  |
-  | React + RTK Query
-  v
-Frontend App Service / Vite dev server
-  |
-  | /api/v1/*
-  v
-Backend Express API
-  |
-  | Mongoose
-  v
-MongoDB / MongoDB Atlas
-```
-
-The frontend reads `VITE_API_URL` for deployed environments. Local development uses the Vite proxy for `/api` and `/uploads`.
-
-## Project Structure
-
-```text
-backend/                 Express API, controllers, routes, models, tests
+backend/                 Express API, routes, controllers, models, tests
 frontend/                React/Vite app and frontend tests
 .github/workflows/       CI, CD, and production smoke workflows
-docs/                    Deployment, testing, and progress documentation
+docs/                    Final report, test docs, deployment docs, demo script
 docker-compose.yml       Local MongoDB, backend, frontend, Prometheus, Grafana
 Dockerfile.backend       Backend container image
 Dockerfile.frontend      Frontend static container image
-jest.config.cjs          Backend coverage configuration
+jest.config.cjs          Backend test and coverage configuration
 ```
-
-## Prerequisites
-
-- Node.js 22.x
-- npm 11.x or compatible
-- MongoDB connection string for local backend development
-- Docker Desktop, optional for compose testing
-- Azure App Service publish profiles, only for production CD
 
 ## Quick Start
 
 ```bash
 npm run setup
-cp .env.example .env
+copy .env.example .env
 npm run fullstack
 ```
 
-Minimum local `.env` values:
+Local URLs:
 
-```env
-PORT=3000
-MONGO_URI=<mongodb-uri>
-JWT_SECRET=<secure-local-secret>
-FRONTEND_ORIGIN=http://localhost:5173
-VITE_API_URL=http://localhost:3000
-```
-
-Frontend: `http://localhost:5173`  
-Backend: `http://localhost:3000`  
-Health: `http://localhost:3000/api/v1/health`  
-Metrics: `http://localhost:3000/metrics`
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
+- Health: `http://localhost:3000/api/v1/health`
+- Metrics: `http://localhost:3000/metrics`
 
 ## Command Reference
 
 | Command                          | Purpose                                              |
 | -------------------------------- | ---------------------------------------------------- |
 | `npm run setup`                  | Install root and frontend dependencies with `npm ci` |
-| `npm run backend`                | Run backend with nodemon                             |
-| `npm run frontend`               | Run frontend Vite dev server                         |
 | `npm run fullstack`              | Run backend and frontend together                    |
 | `npm run lint`                   | Lint backend and frontend                            |
 | `npm run format:check`           | Check Prettier formatting                            |
-| `npm test`                       | Run backend tests with coverage gate                 |
-| `npm run test:frontend:coverage` | Run frontend tests with coverage gate                |
+| `npm run test:backend:coverage`  | Run backend tests with coverage gates                |
+| `npm run test:frontend:coverage` | Run frontend tests with coverage gates               |
 | `npm run test:all`               | Run backend and frontend coverage suites             |
 | `npm run build:frontend`         | Build frontend production assets                     |
 | `npm run docker:build`           | Build backend and frontend Docker images             |
 | `npm run compose:up`             | Run the local Docker Compose stack                   |
 | `npm run compose:down`           | Stop the local Docker Compose stack                  |
-
-## Testing Strategy
-
-Coverage is part of the grading target and CI quality gate. Framework/build code is excluded; application backend code and selected frontend app layers are measured.
-
-Backend coverage:
-
-- Runner: Jest
-- HTTP testing: Supertest
-- Database: MongoDB Memory Server
-- Coverage artifacts:
-  - `coverage/lcov.info`
-  - `coverage/cobertura-coverage.xml`
-- Minimum global threshold: `60%` statements, branches, functions, and lines
-- Current local result: 51 backend tests passing, around 79% statement/line coverage
-
-Frontend coverage:
-
-- Runner: Vitest
-- UI testing: React Testing Library
-- Coverage artifacts:
-  - `frontend/coverage/lcov.info`
-  - `frontend/coverage/cobertura-coverage.xml`
-- Minimum threshold over configured frontend scope: `60%`
-- Current local result: 12 frontend tests passing, around 79% statement coverage
-
-Covered scenarios include health, CORS, metrics, auth, admin authorization, genre CRUD, movie CRUD, reviews, uploads, route guards, auth forms, Redux filter state, RTK Query movie URLs, and movie search/filter UI behavior.
-
-## API Overview
-
-| Area    | Endpoints                                                                                                                                                                                     |
-| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Health  | `GET /api/v1/health`, `GET /metrics`                                                                                                                                                          |
-| Users   | `POST /api/v1/users`, `POST /api/v1/users/auth`, `POST /api/v1/users/logout`, `GET/PUT /api/v1/users/profile`                                                                                 |
-| Genres  | `GET /api/v1/genre/genres`, `GET/PUT/DELETE /api/v1/genre/:id`, `POST /api/v1/genre`                                                                                                          |
-| Movies  | `GET /api/v1/movies/all-movies`, `GET /api/v1/movies/specific-movie/:id`, `POST /api/v1/movies/create-movie`, `PUT /api/v1/movies/update-movie/:id`, `DELETE /api/v1/movies/delete-movie/:id` |
-| Reviews | `POST /api/v1/movies/:id/reviews`, `DELETE /api/v1/movies/delete-comment`                                                                                                                     |
-| Uploads | `POST /api/v1/upload`                                                                                                                                                                         |
 
 ## CI/CD Pipeline
 
@@ -161,49 +105,47 @@ Covered scenarios include health, CORS, metrics, auth, admin authorization, genr
 
 Workflow: `.github/workflows/ci.yml`
 
-Runs on pushes and pull requests to `main`:
+Runs on pushes to any branch and on pull requests targeting `main`:
 
-1. Checkout repository
-2. Setup Node.js 22
-3. Install root and frontend dependencies with `npm ci`
-4. Run backend and frontend lint
-5. Run Prettier check
-6. Run backend coverage tests
-7. Run frontend coverage tests
-8. Build frontend assets
-9. Upload backend and frontend coverage artifacts
+1. Checkout repository.
+2. Setup Node.js 22.
+3. Install backend/root and frontend dependencies with `npm ci`.
+4. Run backend and frontend linting.
+5. Run Prettier format check.
+6. Run backend tests with coverage.
+7. Run frontend tests with coverage.
+8. Build frontend production assets.
+9. Upload backend and frontend coverage artifacts.
 
 ### CD Pipeline
 
 Workflow: `.github/workflows/cd.yml`
 
-Manual `workflow_dispatch` with `staging` or `production` target:
+Runs after the `CI Pipeline` completes successfully on `main`:
 
-- `validate` job runs lint, format, backend coverage, frontend coverage, and frontend build first.
-- Deployment jobs use `needs: validate`, so deployment cannot proceed if code quality or coverage fails.
-- Staging path builds and pushes Docker images to Azure Container Registry.
-- Production path builds deployment packages and deploys backend/frontend to Azure App Service.
+- `staging` builds and pushes Docker images to Azure Container Registry for the container-based path.
+- `production` waits for staging, then builds deployment packages and deploys backend/frontend to Azure App Service with publish profiles.
+- Production deployment ends with a backend health smoke check.
 
 ### Production Status
 
 Workflow: `.github/workflows/production-status.yml`
 
-Verifies live production endpoints:
+Runs on pushes to `main` and manual dispatch. It verifies:
 
 - Backend health endpoint
 - Movies API endpoint
 - Frontend URL
 
-## Deployment Environments
-
-Current documented production URLs:
+## Production Environment
 
 - Frontend: `https://mernmovies-web-node-81448.azurewebsites.net`
 - Backend: `https://mernmovies-api-node-81448.azurewebsites.net`
 - Health: `https://mernmovies-api-node-81448.azurewebsites.net/api/v1/health`
 - Movies API: `https://mernmovies-api-node-81448.azurewebsites.net/api/v1/movies/all-movies`
+- Metrics: `https://mernmovies-api-node-81448.azurewebsites.net/metrics`
 
-Required GitHub Secrets for deployment:
+Required GitHub Actions secrets:
 
 - `PRODUCTION_BACKEND_URL`
 - `STAGING_BACKEND_URL`
@@ -215,21 +157,33 @@ Required GitHub Secrets for deployment:
 - `ACR_USERNAME`
 - `ACR_PASSWORD`
 
-## Troubleshooting
+## Testing Summary
 
-- `npm ci` fails: ensure `package.json` and lockfiles are committed together and rerun from a clean branch.
-- Frontend cannot call backend in production: verify `VITE_API_URL` at build time and `FRONTEND_ORIGIN` on the backend.
-- Protected endpoints return 401: confirm login cookie is present and `JWT_SECRET` matches the backend environment.
-- Uploads fail: ensure `uploads/` exists or let the tested upload route create files in a writable working directory.
-- CI passes but production smoke fails: inspect Azure App Service app settings and deployment logs.
+Current automated test coverage includes backend API behavior, CORS, health checks, Prometheus metrics, authentication, admin authorization, genre CRUD, movie CRUD, reviews, uploads, route guards, auth forms, Redux movie filter state, RTK Query movie URLs, and movie search/filter UI behavior.
 
-## Contributing Workflow
+Coverage thresholds are configured at 60% for statements, branches, functions, and lines.
 
-1. Branch from the latest `origin/main`.
-2. Run `npm run setup`.
-3. Make focused changes.
-4. Run `npm run lint`, `npm run format:check`, `npm run test:all`, and `npm run build:frontend`.
-5. Open a pull request and wait for CI to pass before merging.
+See [docs/TESTING.md](docs/TESTING.md) for details.
+
+## Final Demo
+
+For the final presentation, use [docs/FINAL_DEMO_SCRIPT.md](docs/FINAL_DEMO_SCRIPT.md). The intended demo flow is:
+
+1. Show the project goal and pipeline diagram.
+2. Show the live production app.
+3. Show GitHub Actions CI passing on `main`.
+4. Show the CD workflow that runs after successful CI on `main`.
+5. Show production smoke checks.
+6. Show `/metrics` monitoring output.
+7. Explain what happens when CI fails and how the team fixed it.
+
+## Documentation
+
+- [docs/FINAL_PROJECT_REPORT.md](docs/FINAL_PROJECT_REPORT.md)
+- [docs/FINAL_DEMO_SCRIPT.md](docs/FINAL_DEMO_SCRIPT.md)
+- [docs/TESTING.md](docs/TESTING.md)
+- [docs/AZURE_PRODUCTION_DEPLOY.md](docs/AZURE_PRODUCTION_DEPLOY.md)
+- [docs/PRODUCTION_DEPLOYMENT_EVIDENCE.md](docs/PRODUCTION_DEPLOYMENT_EVIDENCE.md)
 
 ## Fork Attribution
 

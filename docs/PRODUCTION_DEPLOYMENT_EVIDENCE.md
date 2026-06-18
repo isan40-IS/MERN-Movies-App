@@ -2,7 +2,9 @@
 
 ## Deployment Status
 
-Production deployment is complete and running on Azure App Service without Docker or ACR.
+Production is deployed on Azure App Service and verified by the `Production Status` GitHub Actions workflow.
+
+Verified on: June 18, 2026
 
 ## Azure Resources
 
@@ -17,40 +19,39 @@ Production deployment is complete and running on Azure App Service without Docke
 
 - Frontend: `https://mernmovies-web-node-81448.azurewebsites.net`
 - Backend: `https://mernmovies-api-node-81448.azurewebsites.net`
-- Health check: `https://mernmovies-api-node-81448.azurewebsites.net/api/v1/health`
+- Health: `https://mernmovies-api-node-81448.azurewebsites.net/api/v1/health`
 - Movies API: `https://mernmovies-api-node-81448.azurewebsites.net/api/v1/movies/all-movies`
+- Metrics: `https://mernmovies-api-node-81448.azurewebsites.net/metrics`
 
 ## Verification Results
 
-Verified on June 9, 2026:
+The live environment has been verified for:
 
 - Backend health endpoint returns `200 OK`.
-- Movies API endpoint returns `200 OK`.
+- Movies API endpoint returns `200 OK` and movie data.
 - Frontend endpoint returns `200 OK`.
-- Backend App Service state is `Running`.
-- Frontend App Service state is `Running`.
-- Backend App Service uses `NODE_ENV=production`.
-- Backend App Service is configured for the `moviesapp-prod` MongoDB database.
-- Frontend CORS origin is configured on the backend.
-
-## Local Quality Gates
-
-Latest local checks:
-
-- `npm.cmd run lint` passed.
-- `npm.cmd run build:frontend` passed with production backend URL.
-- `npm.cmd run format:check` passed.
-- `npm.cmd test` passed: 3 suites, 11 tests.
+- Metrics endpoint returns Prometheus-compatible text.
+- Backend allows the production frontend origin with credentials through CORS.
+- Production Status workflow passes on GitHub Actions.
 
 ## Deployment Method
 
-The final deployment follows the Week 11 Azure CLI/App Service module style:
+The production path uses:
 
 - Azure App Service Linux runtime
 - Node.js runtime
-- ZIP/code deployment
-- Publish profile compatible GitHub Actions workflow
-- No Docker
-- No ACR
+- GitHub Actions `workflow_run` after successful CI on `main`
+- Publish profile based deployment
+- Backend and frontend deployment packages
+- Post-deployment backend health smoke check
 
-GitHub Actions production CD is available through manual `workflow_dispatch` after publish profile secrets are configured.
+The repository also keeps Docker and Docker Compose support for local/staging container evidence, but the final production deployment path is Azure App Service package deployment.
+
+## Commands For Manual Smoke Checks
+
+```bash
+curl -f https://mernmovies-api-node-81448.azurewebsites.net/api/v1/health
+curl -f https://mernmovies-api-node-81448.azurewebsites.net/api/v1/movies/all-movies
+curl -f https://mernmovies-web-node-81448.azurewebsites.net
+curl -f https://mernmovies-api-node-81448.azurewebsites.net/metrics
+```

@@ -12,11 +12,15 @@ describe('Health API', () => {
     expect(res.body.timestamp).toBeDefined();
   });
 
-  it('should allow configured frontend origins through CORS', async () => {
-    const res = await request(app).get('/api/v1/health').set('Origin', 'http://localhost:5173');
+  it.each([
+    'http://localhost:5173',
+    'http://localhost:4173',
+    'https://mernmovies-web-node-81448.azurewebsites.net',
+  ])('should allow configured frontend origin %s through CORS', async (origin) => {
+    const res = await request(app).get('/api/v1/health').set('Origin', origin);
 
     expect(res.statusCode).toBe(200);
-    expect(res.headers['access-control-allow-origin']).toBe('http://localhost:5173');
+    expect(res.headers['access-control-allow-origin']).toBe(origin);
     expect(res.headers['access-control-allow-credentials']).toBe('true');
   });
 
