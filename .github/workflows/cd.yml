@@ -1,16 +1,10 @@
 name: CD Pipeline
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target deployment environment'
-        required: true
-        default: staging
-        type: choice
-        options:
-          - staging
-          - production
+  workflow_run:
+    workflows: ['CI Pipeline']
+    types: [completed]
+    branches: [main]
 
 env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
@@ -18,52 +12,18 @@ env:
   FRONTEND_IMAGE_NAME: mernmoviesapp-frontend
 
 jobs:
-  validate:
-    name: Validate Codebase Before Deployment
+  deploy-staging:
+    name: Deploy to Staging (Docker + ACR)
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: 'npm'
-
-      - name: Install root dependencies
-        run: npm ci
-
-      - name: Install frontend dependencies
-        run: npm ci --prefix frontend
-
-      - name: Run lint
-        run: npm run lint
-
-      - name: Check formatting
-        run: npm run format:check
-
-      - name: Run backend tests with coverage
-        run: npm run test:backend:coverage
-
-      - name: Run frontend tests with coverage
-        run: npm run test:frontend:coverage
-
-      - name: Build frontend assets
-        run: npm run build:frontend
-
-  deploy-staging-docker:
-    name: Deploy Staging with Docker and ACR
-    needs: validate
-    if: github.event.inputs.environment == 'staging'
-    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
     environment:
       name: staging
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (from the CI commit)
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Login to ACR
         uses: docker/login-action@v3
@@ -87,42 +47,40 @@ jobs:
             -t $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest \
             .
 
-      - name: Push backend image to ACR
-        run: docker push $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest
-
-      - name: Push frontend image to ACR
-        run: docker push $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest
+      - name: Push images to ACR
+        run: |
+          docker push $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest
+          docker push $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest
 
       - name: Smoke test staging backend
         run: |
-          echo "Waiting for Azure App Service Continuous Deployment..."
+          echo "Waiting for Azure App Service to pick up new images..."
           sleep 120
-
           for i in {1..10}; do
             echo "Health check attempt $i..."
             if curl --fail --silent --show-error --max-time 15 "${{ secrets.STAGING_BACKEND_URL }}/api/v1/health"; then
               echo "Staging backend is healthy."
               exit 0
             fi
-
             echo "Backend not ready yet. Retrying in 30 seconds..."
             sleep 30
           done
-
           echo "Staging backend health check failed."
           exit 1
 
-  deploy-production-package:
-    name: Deploy Production with Package Deployment
-    needs: validate
-    if: github.event.inputs.environment == 'production'
+  deploy-production:
+    name: Deploy to Production (Package Deployment)
     runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.event.workflow_run.conclusion == 'success'
     environment:
       name: production
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (from the CI commit)
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
