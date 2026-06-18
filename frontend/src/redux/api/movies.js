@@ -1,18 +1,21 @@
 import { apiSlice } from './apiSlice';
 import { MOVIE_URL, UPLOAD_URL } from '../constants';
 
+export const buildAllMoviesQuery = ({ search = '', genre = '', year = '', rating = '' } = {}) => {
+  const params = new URLSearchParams();
+  if (search) params.append('search', search);
+  if (genre) params.append('genre', genre);
+  if (year) params.append('year', year);
+  if (rating) params.append('rating', rating);
+
+  const queryString = params.toString();
+  return `${MOVIE_URL}/all-movies${queryString ? `?${queryString}` : ''}`;
+};
+
 export const moviesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllMovies: builder.query({
-      query: ({ search = '', genre = '', year = '', rating = '' } = {}) => {
-        const params = new URLSearchParams();
-        if (search) params.append('search', search);
-        if (genre) params.append('genre', genre);
-        if (year) params.append('year', year);
-        if (rating) params.append('rating', rating);
-        const queryString = params.toString();
-        return `${MOVIE_URL}/all-movies${queryString ? `?${queryString}` : ''}`;
-      },
+      query: buildAllMoviesQuery,
     }),
     createMovie: builder.mutation({
       query: (newMovie) => ({
