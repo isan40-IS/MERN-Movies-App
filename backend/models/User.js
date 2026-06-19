@@ -18,6 +18,13 @@ const userSchema = mongoose.Schema(
       required: true,
     },
 
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Movie',
+      },
+    ],
+
     isAdmin: {
       type: Boolean,
       required: true,

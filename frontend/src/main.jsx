@@ -22,6 +22,7 @@ import UpdateMovie from './pages/Admin/UpdateMovie.jsx';
 import CreateMovie from './pages/Admin/CreateMovie.jsx';
 import AllMovies from './pages/Movies/AllMovies.jsx';
 import MovieDetails from './pages/Movies/MovieDetails.jsx';
+import Favorites from './pages/Movies/Favorites.jsx';
 import AllComments from './pages/Admin/AllComments.jsx';
 import AdminDashboard from './pages/Admin/Dashboard/AdminDashboard.jsx';
 
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
 
       <Route path="" element={<PrivateRoute />}>
         <Route path="/profile" element={<Profile />} />
+        <Route path="/favorites" element={<Favorites />} />
       </Route>
 
       <Route path="" element={<AdminRoute />}>

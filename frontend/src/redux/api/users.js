@@ -39,6 +39,21 @@ export const userApiSlice = apiSlice.injectEndpoints({
         url: USERS_URL,
       }),
     }),
+
+    getFavoriteMovies: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/favorites`,
+      }),
+      providesTags: ['Favorites'],
+    }),
+
+    toggleFavoriteMovie: builder.mutation({
+      query: (movieId) => ({
+        url: `${USERS_URL}/favorites/${movieId}`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Favorites'],
+    }),
   }),
 });
 
@@ -48,4 +63,6 @@ export const {
   useLogoutMutation,
   useProfileMutation,
   useGetUsersQuery,
+  useGetFavoriteMoviesQuery,
+  useToggleFavoriteMovieMutation,
 } = userApiSlice;
