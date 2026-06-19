@@ -50,6 +50,15 @@ const Navigation = () => {
             <MdOutlineLocalMovies className="mr-2 mt-[3rem]" size={26} />
             <span className="hidden nav-item-name mt-[3rem]">SHOP</span>
           </Link>
+          {userInfo && (
+            <Link
+              to="/favorites"
+              className="flex items-center transition-transform transform hover:translate-x-2 ml-[1rem]"
+            >
+              <span className="mr-2 mt-[3rem] text-teal-200">❤️</span>
+              <span className="hidden nav-item-name mt-[3rem]">Favorites</span>
+            </Link>
+          )}
         </div>
         {/* Section 2 */}
         <div className="relative">

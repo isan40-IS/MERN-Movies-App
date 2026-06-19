@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Movie from '../models/Movie.js';
 import bcrypt from 'bcryptjs';
 import asyncHandler from '../middlewares/asyncHandler.js';
 import createToken from '../utils/createToken.js';
@@ -27,6 +28,7 @@ const createUser = asyncHandler(async (req, res) => {
       username: newUser.username,
       email: newUser.email,
       isAdmin: newUser.isAdmin,
+      favorites: newUser.favorites || [],
     });
   } catch (error) {
     res.status(400);
@@ -50,6 +52,7 @@ const loginUser = asyncHandler(async (req, res) => {
         username: existingUser.username,
         email: existingUser.email,
         isAdmin: existingUser.isAdmin,
+        favorites: existingUser.favorites || [],
       });
     } else {
       res.status(401).json({ message: 'Invalid Password' });
@@ -85,6 +88,7 @@ const getCurrentUserProfile = asyncHandler(async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
+      favorites: user.favorites || [],
     });
   } else {
     res.status(404);
@@ -112,11 +116,53 @@ const updateCurrentUserProfile = asyncHandler(async (req, res) => {
       username: updatedUser.username,
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
+      favorites: updatedUser.favorites || [],
     });
   } else {
     res.status(404);
     throw new Error('User not found');
   }
+});
+
+const getFavoriteMovies = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).populate('favorites');
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  res.json(user.favorites || []);
+});
+
+const toggleFavoriteMovie = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const movie = await Movie.findById(id);
+
+  if (!movie) {
+    res.status(404);
+    throw new Error('Movie not found');
+  }
+
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  const alreadyFavorite = user.favorites.some((favId) => favId.toString() === id);
+
+  if (alreadyFavorite) {
+    user.favorites = user.favorites.filter((favId) => favId.toString() !== id);
+  } else {
+    user.favorites.push(movie._id);
+  }
+
+  await user.save();
+  await user.populate('favorites');
+
+  res.json(user.favorites);
 });
 
 export {
@@ -126,4 +172,6 @@ export {
   getAllUsers,
   getCurrentUserProfile,
   updateCurrentUserProfile,
+  getFavoriteMovies,
+  toggleFavoriteMovie,
 };

@@ -44,6 +44,36 @@ try {
       password: hashedPassword,
       isAdmin: false,
     },
+    {
+      username: 'sinta',
+      email: 'sinta@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'reviewer',
+      email: 'reviewer@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'nabila',
+      email: 'nabila@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'rama',
+      email: 'rama@mail.com',
+      password: hashedPassword,
+      isAdmin: false,
+    },
+    {
+      username: 'admin2',
+      email: 'admin2@mail.com',
+      password: hashedPassword,
+      isAdmin: true,
+    },
   ]);
 
   console.log('Users seeded');
@@ -59,6 +89,12 @@ try {
     { name: 'Romance' },
     { name: 'Crime' },
     { name: 'Adventure' },
+    { name: 'Horror' },
+    { name: 'Mystery' },
+    { name: 'Biography' },
+    { name: 'Musical' },
+    { name: 'Historical' },
+    { name: 'Superhero' },
   ]);
 
   console.log('Genres seeded');
@@ -71,7 +107,7 @@ try {
   const movies = [
     {
       name: 'Avengers: Endgame',
-      image: placeholder('Avengers Endgame'),
+      image: 'https://image.tmdb.org/t/p/w1280/ulzhLuWrPK07P1YkdWQLZnQh1JL.jpg',
       year: 2019,
       genre: genreMap['Action'],
       detail:
@@ -89,7 +125,7 @@ try {
     },
     {
       name: 'The Godfather',
-      image: placeholder('The Godfather'),
+      image: 'https://image.tmdb.org/t/p/w1280/3bhkrj58Vtu7enYsRolD1fZdja1.jpg',
       year: 1972,
       genre: genreMap['Crime'],
       detail:
@@ -107,7 +143,7 @@ try {
     },
     {
       name: 'Interstellar',
-      image: placeholder('Interstellar'),
+      image: 'https://image.tmdb.org/t/p/w1280/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg',
       year: 2014,
       genre: genreMap['Sci-Fi'],
       detail:
@@ -125,7 +161,7 @@ try {
     },
     {
       name: 'Inception',
-      image: placeholder('Inception'),
+      image: 'https://image.tmdb.org/t/p/w1280/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg',
       year: 2010,
       genre: genreMap['Sci-Fi'],
       detail:
@@ -136,7 +172,7 @@ try {
     },
     {
       name: 'The Dark Knight',
-      image: placeholder('The Dark Knight'),
+      image: 'https://image.tmdb.org/t/p/w1280/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
       year: 2008,
       genre: genreMap['Action'],
       detail: 'Batman faces the Joker, a criminal mastermind who plunges Gotham City into chaos.',
@@ -153,7 +189,7 @@ try {
     },
     {
       name: 'La La Land',
-      image: placeholder('La La Land'),
+      image: 'https://image.tmdb.org/t/p/w1280/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg',
       year: 2016,
       genre: genreMap['Romance'],
       detail:
@@ -164,7 +200,7 @@ try {
     },
     {
       name: 'Toy Story',
-      image: placeholder('Toy Story'),
+      image: 'https://image.tmdb.org/t/p/w1280/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg',
       year: 1995,
       genre: genreMap['Animation'],
       detail:
@@ -175,7 +211,7 @@ try {
     },
     {
       name: 'The Matrix',
-      image: placeholder('The Matrix'),
+      image: 'https://image.tmdb.org/t/p/w1280/dXNAPwY7VrqMAo51EKhhCJfaGb5.jpg',
       year: 1999,
       genre: genreMap['Sci-Fi'],
       detail: 'A hacker discovers that reality is a simulated world controlled by machines.',
@@ -184,8 +220,115 @@ try {
       numReviews: 0,
     },
     {
+      name: 'Guardians of the Galaxy',
+      image: 'https://image.tmdb.org/t/p/w1280/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg',
+      year: 2014,
+      genre: genreMap['Superhero'],
+      detail:
+        'A group of unlikely heroes must work together to stop a powerful villain from destroying the galaxy.',
+      cast: ['Chris Pratt', 'Zoe Saldana', 'Dave Bautista'],
+      reviews: [
+        {
+          name: 'nabila',
+          rating: 5,
+          comment: 'Funny, colorful, and very entertaining.',
+          user: users.find((user) => user.email === 'nabila@mail.com')._id,
+        },
+      ],
+      numReviews: 1,
+    },
+    {
+      name: 'Whiplash',
+      image: 'https://image.tmdb.org/t/p/w1280/7fn624j5lj3xTme2SgiLCeuedmO.jpg',
+      year: 2014,
+      genre: genreMap['Drama'],
+      detail:
+        'A young drummer joins a strict music conservatory and faces intense pressure from his demanding instructor.',
+      cast: ['Miles Teller', 'J.K. Simmons', 'Melissa Benoist'],
+      reviews: [
+        {
+          name: 'rama',
+          rating: 5,
+          comment: 'Very intense and powerful. The ending is amazing.',
+          user: users.find((user) => user.email === 'rama@mail.com')._id,
+        },
+      ],
+      numReviews: 1,
+    },
+    {
+      name: 'Hamilton',
+      image: 'https://image.tmdb.org/t/p/w1280/A8wKCnzR2lksFuO6XyJZUUYddRP.jpg',
+      year: 2020,
+      genre: genreMap['Musical'],
+      detail:
+        'A filmed version of the Broadway musical about Alexander Hamilton, told through hip-hop and stage performance.',
+      cast: ['Lin-Manuel Miranda', 'Phillipa Soo', 'Leslie Odom Jr.'],
+      reviews: [],
+      numReviews: 0,
+    },
+    {
+      name: '1917',
+      image: 'https://image.tmdb.org/t/p/w1280/iZf0KyrE25z1sage4SYFLCCrMi9.jpg',
+      year: 2019,
+      genre: genreMap['Historical'],
+      detail:
+        'Two soldiers during World War I are sent on a dangerous mission to deliver a message that could save many lives.',
+      cast: ['George MacKay', 'Dean-Charles Chapman', 'Mark Strong'],
+      reviews: [
+        {
+          name: 'admin2',
+          rating: 4,
+          comment: 'Beautifully shot and very tense from start to finish.',
+          user: users.find((user) => user.email === 'admin2@mail.com')._id,
+        },
+      ],
+      numReviews: 1,
+    },
+    {
+      name: 'Get Out',
+      image: 'https://image.tmdb.org/t/p/w1280/mE24wUCfjK8AoBBjaMjho7Rczr7.jpg',
+      year: 2017,
+      genre: genreMap['Thriller'],
+      detail:
+        'A young man visits his girlfriend’s family and discovers a disturbing secret beneath their friendly behavior.',
+      cast: ['Daniel Kaluuya', 'Allison Williams', 'Lakeith Stanfield'],
+      reviews: [
+        {
+          name: 'nabila',
+          rating: 5,
+          comment: 'Smart, scary, and full of tension.',
+          user: users.find((user) => user.email === 'nabila@mail.com')._id,
+        },
+        {
+          name: 'rama',
+          rating: 4,
+          comment: 'Very unique thriller with a strong message.',
+          user: users.find((user) => user.email === 'rama@mail.com')._id,
+        },
+      ],
+      numReviews: 2,
+    },
+    {
+      name: 'Coco',
+      image: 'https://image.tmdb.org/t/p/w1280/6Ryitt95xrO8KXuqRGm1fUuNwqF.jpg',
+      year: 2017,
+      genre: genreMap['Animation'],
+      detail:
+        'A young boy who dreams of becoming a musician enters the Land of the Dead and learns about family and memory.',
+      cast: ['Anthony Gonzalez', 'Gael Garcia Bernal', 'Benjamin Bratt'],
+      reviews: [
+        {
+          name: 'admin2',
+          rating: 5,
+          comment: 'Heartwarming, emotional, and visually beautiful.',
+          user: users.find((user) => user.email === 'admin2@mail.com')._id,
+        },
+      ],
+      numReviews: 1,
+    },
+    {
       name: 'Joker',
-      image: placeholder('Joker'),
+      image: 'https://image.tmdb.org/t/p/w1280/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg',
       year: 2019,
       genre: genreMap['Drama'],
       detail:
@@ -196,7 +339,7 @@ try {
     },
     {
       name: 'Spider-Man: No Way Home',
-      image: placeholder('Spider Man'),
+      image: 'https://image.tmdb.org/t/p/w1280/kjdJntyBeEvqm9w97QGBdxPptzj.jpg',
       year: 2021,
       genre: genreMap['Adventure'],
       detail: 'Peter Parker seeks help from Doctor Strange, causing the multiverse to break open.',
@@ -206,7 +349,7 @@ try {
     },
     {
       name: 'Parasite',
-      image: placeholder('Parasite'),
+      image: 'https://image.tmdb.org/t/p/w1280/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
       year: 2019,
       genre: genreMap['Thriller'],
       detail:
@@ -217,12 +360,59 @@ try {
     },
     {
       name: 'The Grand Budapest Hotel',
-      image: placeholder('Grand Budapest'),
+      image: 'https://image.tmdb.org/t/p/w1280/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg',
       year: 2014,
       genre: genreMap['Comedy'],
       detail:
         'A hotel concierge and his lobby boy become involved in a story of theft, family fortune, and murder.',
       cast: ['Ralph Fiennes', 'Tony Revolori'],
+      reviews: [],
+      numReviews: 0,
+    },
+    {
+      name: 'Dune',
+      image: 'https://image.tmdb.org/t/p/w1280/gDzOcq0pfeCeqMBwKIJlSmQpjkZ.jpg',
+      year: 2021,
+      genre: genreMap['Sci-Fi'],
+      detail:
+        'A young nobleman becomes part of a war for control over the most valuable resource in the universe.',
+      cast: ['Timothée Chalamet', 'Zendaya', 'Rebecca Ferguson'],
+      reviews: [
+        {
+          name: 'sinta',
+          rating: 5,
+          comment: 'Beautiful visuals and very interesting world-building.',
+          user: users.find((user) => user.email === 'sinta@mail.com')._id,
+        },
+      ],
+      numReviews: 1,
+    },
+    {
+      name: 'The Conjuring',
+      image: 'https://image.tmdb.org/t/p/w1280/wVYREutTvI2tmxr6ujrHT704wGF.jpg',
+      year: 2013,
+      genre: genreMap['Horror'],
+      detail:
+        'Paranormal investigators help a family terrorized by a dark presence in their farmhouse.',
+      cast: ['Vera Farmiga', 'Patrick Wilson', 'Lili Taylor'],
+      reviews: [
+        {
+          name: 'reviewer',
+          rating: 4,
+          comment: 'Scary and suspenseful horror movie.',
+          user: users.find((user) => user.email === 'reviewer@mail.com')._id,
+        },
+      ],
+      numReviews: 1,
+    },
+    {
+      name: 'Oppenheimer',
+      image: 'https://image.tmdb.org/t/p/w1280/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+      year: 2023,
+      genre: genreMap['Biography'],
+      detail:
+        'The story of J. Robert Oppenheimer and the creation of the atomic bomb during World War II.',
+      cast: ['Cillian Murphy', 'Emily Blunt', 'Robert Downey Jr.'],
       reviews: [],
       numReviews: 0,
     },

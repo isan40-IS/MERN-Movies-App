@@ -7,6 +7,8 @@ import {
   getAllUsers,
   getCurrentUserProfile,
   updateCurrentUserProfile,
+  getFavoriteMovies,
+  toggleFavoriteMovie,
 } from '../controllers/userController.js';
 
 // middlewares
@@ -18,6 +20,9 @@ router.route('/').post(createUser).get(authenticate, authorizeAdmin, getAllUsers
 
 router.post('/auth', loginUser);
 router.post('/logout', logoutCurrentUser);
+
+router.route('/favorites').get(authenticate, getFavoriteMovies);
+router.post('/favorites/:id', authenticate, toggleFavoriteMovie);
 
 router
   .route('/profile')
